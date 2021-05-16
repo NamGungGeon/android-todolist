@@ -1,4 +1,4 @@
-git package kr.ac.konkuk.planman
+package kr.ac.konkuk.planman
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
