@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         supportActionBar?.hide()
-        todoListVisualizers.add(CalendarTodoFragment())
+        todoListVisualizers.add(ListTodoFragment())
         todoListVisualizers.add(CalendarTodoFragment())
         todoListVisualizers.add(CalendarTodoFragment())
 
