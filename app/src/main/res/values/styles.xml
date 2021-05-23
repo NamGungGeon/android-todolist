@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="icon">
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:scaleType">fitXY</item>
+        <item name="android:padding">4dp</item>
+        <item name="android:layout_width">36dp</item>
+        <item name="android:layout_height">36dp</item>
+    </style>
+</resources>
