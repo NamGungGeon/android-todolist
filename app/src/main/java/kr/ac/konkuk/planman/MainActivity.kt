@@ -1,5 +1,6 @@
 package kr.ac.konkuk.planman
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -31,6 +32,11 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             todoListPager.offscreenPageLimit= todoListVisualizers.size
+
+            addTodoBtn.setOnClickListener {
+                val intent= Intent(applicationContext, AddTodoActivity::class.java)
+                startActivity(intent)
+            }
         }
     }
 }
