@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kr.ac.konkuk.planman.databinding.ActivityListViewBinding
@@ -20,6 +21,7 @@ class ListViewActivity : AppCompatActivity() {
         initActionBar()
         initData()
         initRecyclerView()
+        initTitleText()
     }
 
     private fun initActionBar() {
@@ -49,5 +51,10 @@ class ListViewActivity : AppCompatActivity() {
             recyclerView.layoutManager = LinearLayoutManager(this@ListViewActivity, LinearLayoutManager.VERTICAL, false)
             recyclerView.adapter = ListAdapter(data)
         }
+    }
+
+    private fun initTitleText() {
+        val itemCount = data.size
+        binding.textView.text = "할 일이 $itemCount 개 있습니다"
     }
 }
