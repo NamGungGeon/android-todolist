@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 class ListAdapter(val items:ArrayList<MyData>) : RecyclerView.Adapter<ListAdapter.ViewHolder>(){
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val titleTextView : TextView= itemView.findViewById(R.id.textView2)
+        val titleTextView : TextView= itemView.findViewById(R.id.todoListText)
     }
 
 
