@@ -1,113 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".MainActivity">
+    android:fitsSystemWindows="true"
+    app:defaultNavHost="true"
+    tools:openDrawer="start">
 
     <LinearLayout
+        android:id="@+id/app_bar_navitivation_test"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <ImageButton
-            style="@style/icon"
-            android:layout_margin="8dp"
-            android:src="@drawable/ic_baseline_menu_24" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:orientation="horizontal">
-
-            <ImageButton
-                style="@style/icon"
-                android:layout_margin="8dp"
-                android:src="@drawable/ic_baseline_search_24" />
-
-            <ImageButton
-                style="@style/icon"
-                android:layout_margin="8dp"
-                android:src="@drawable/ic_baseline_settings_24" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="8dp">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:background="@color/example_5_text_grey"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:tint="@color/black"
-                style="@style/icon"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:src="@drawable/ic_baseline_checklist_rtl_24" />
-
-            <ImageView
-                style="@style/icon"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:src="@drawable/ic_baseline_map_24" />
-
-            <ImageView
-                style="@style/icon"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:src="@drawable/ic_baseline_calendar_today_24" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:visibility="gone"
+        tools:context=".MainActivity">
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
+            android:theme="@style/Theme.Planman.AppBarOverlay">
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:popupTheme="@style/Theme.Planman.PopupOverlay" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <EditText
+
+            <ImageButton
+                style="@style/icon"
+                android:layout_margin="8dp"
+                android:src="@drawable/ic_baseline_menu_24" />
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:hint="여기에 검색할 할 일을 입력하세요" />
+                android:gravity="right"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    style="@style/icon"
+                    android:layout_margin="8dp"
+                    android:src="@drawable/ic_baseline_search_24" />
+
+                <ImageButton
+                    style="@style/icon"
+                    android:layout_margin="8dp"
+                    android:src="@drawable/ic_baseline_settings_24" />
+            </LinearLayout>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/textView"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:text="할 일이 0개 있습니다"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:background="@color/example_5_text_grey"
+                android:orientation="horizontal">
+
+                <ImageView
+                    style="@style/icon"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_baseline_checklist_rtl_24"
+                    android:tint="@color/black" />
+
+                <ImageView
+                    style="@style/icon"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_baseline_map_24" />
+
+                <ImageView
+                    style="@style/icon"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_baseline_calendar_today_24" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:hint="여기에 검색할 할 일을 입력하세요" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="할 일이 0개 있습니다"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/todoListPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="36dp" />
+
+            <Button
+                android:id="@+id/addTodoBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="16dp"
+                android:text="할 일 추가" />
+
+        </RelativeLayout>
     </LinearLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/todoListPager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingBottom="36dp" />
-
-        <Button
-            android:id="@+id/addTodoBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_margin="16dp"
-            android:text="할 일 추가" />
-
-    </RelativeLayout>
-</LinearLayout>
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header_navitivation_test"
+        app:menu="@menu/activity_main_drawer" />
+</androidx.drawerlayout.widget.DrawerLayout>
