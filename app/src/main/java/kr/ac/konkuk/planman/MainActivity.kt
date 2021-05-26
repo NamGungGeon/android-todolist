@@ -37,6 +37,11 @@ class MainActivity : AppCompatActivity() {
                 val intent= Intent(applicationContext, AddTodoActivity::class.java)
                 startActivity(intent)
             }
+            settingBtn.setOnClickListener {
+                val intent = Intent(applicationContext, SettingActivity::class.java)
+                startActivity(intent)
+            }
+
         }
     }
 }
