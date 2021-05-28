@@ -16,45 +16,19 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         tools:context=".MainActivity">
+
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/Theme.Planman.AppBarOverlay">
+
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
                 app:popupTheme="@style/Theme.Planman.PopupOverlay" />
-
         </com.google.android.material.appbar.AppBarLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <ImageButton
-                style="@style/icon"
-                android:layout_margin="8dp"
-                android:src="@drawable/ic_baseline_menu_24" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:orientation="horizontal">
-
-                <ImageButton
-                    style="@style/icon"
-                    android:layout_margin="8dp"
-                    android:src="@drawable/ic_baseline_search_24" />
-
-                <ImageButton
-                    style="@style/icon"
-                    android:layout_margin="8dp"
-                    android:src="@drawable/ic_baseline_settings_24" />
-            </LinearLayout>
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -140,7 +114,5 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header_navitivation_test"
         app:menu="@menu/activity_main_drawer" />
 </androidx.drawerlayout.widget.DrawerLayout>

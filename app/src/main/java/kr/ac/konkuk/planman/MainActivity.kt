@@ -1,35 +1,33 @@
 package kr.ac.konkuk.planman
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavController
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.google.android.material.navigation.NavigationView
 import kr.ac.konkuk.planman.databinding.ActivityMainBinding
 
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var appBarConfiguration: AppBarConfiguration
     lateinit var binding: ActivityMainBinding
     val todoListVisualizers: ArrayList<Fragment> = ArrayList()
+    lateinit var drawerToggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.toolbar)
+        initUI()
+        initActionBar()
+    }
 
+    private fun initUI() {
         todoListVisualizers.add(ListTodoFragment())
         todoListVisualizers.add(CalendarTodoFragment())
         todoListVisualizers.add(CalendarTodoFragment())
@@ -51,31 +49,63 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }
+    }
 
-        val drawerLayout: DrawerLayout = binding.drawerLayout
-        val navView: NavigationView = binding.navView
-        val navController =NavController(this)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow
-            ), drawerLayout
-        )
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
+    private fun initActionBar() {
+        binding.apply {
+            drawerToggle = ActionBarDrawerToggle(
+                this@MainActivity,
+                drawerLayout,
+                binding.toolbar,
+                R.string.drawer_open,
+                R.string.drawer_close
+            )
+            drawerLayout.addDrawerListener(drawerToggle)
+            navView.setNavigationItemSelectedListener {
+                // Pass the event to ActionBarDrawerToggle, if it returns
+                // true, then it has handled the app icon touch event
+                if (drawerToggle.onOptionsItemSelected(it)) {
+                    true
+                }
+                // Handle your other action bar items...
+                false
+            }
+            setSupportActionBar(binding.toolbar)
+            supportActionBar?.apply {
+                setDisplayHomeAsUpEnabled(true)
+                setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24)
+            }
+        }
+    }
 
-        supportActionBar?.setHomeButtonEnabled(true)
+    override fun onPostCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onPostCreate(savedInstanceState, persistentState)
+        drawerToggle.syncState()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.navitivation_test, menu)
+        menuInflater.inflate(R.menu.menu, menu)
         return true
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.setting -> {
+            }
+            R.id.search -> {
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        drawerToggle.onConfigurationChanged(newConfig)
+    }
+
     override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_navitivation_test)
-        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+        binding.drawerLayout.open()
+        return super.onSupportNavigateUp()
     }
 }
