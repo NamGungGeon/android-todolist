@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -65,6 +66,9 @@ class MainActivity : AppCompatActivity() {
                 // Pass the event to ActionBarDrawerToggle, if it returns
                 // true, then it has handled the app icon touch event
                 if (drawerToggle.onOptionsItemSelected(it)) {
+                    val categoryName = it.title
+                    Toast.makeText(this@MainActivity, "${categoryName} 선택됨", Toast.LENGTH_SHORT).show()
+                    drawerLayout.close()
                     true
                 }
                 // Handle your other action bar items...
@@ -74,6 +78,15 @@ class MainActivity : AppCompatActivity() {
             supportActionBar?.apply {
                 setDisplayHomeAsUpEnabled(true)
                 setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24)
+            }
+        }
+    }
+
+    private fun initCategories(categories: ArrayList<String>) {
+        binding.navView.menu.apply {
+            clear()
+            categories.map {
+                add(it)
             }
         }
     }
@@ -110,6 +123,13 @@ class MainActivity : AppCompatActivity() {
         binding.drawerLayout.open()
         return super.onSupportNavigateUp()
     }
+
+    override fun onResume() {
+        super.onResume()
+
+        initCategories(arrayListOf<String>("업무", "약속", "일정", "구매"))
+    }
+
     override fun onBackPressed() {
         val isOpen= binding.drawerLayout.isOpen
         if(isOpen){
