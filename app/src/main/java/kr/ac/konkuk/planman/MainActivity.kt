@@ -92,6 +92,8 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.setting -> {
+                val intent = Intent(applicationContext, SettingActivity::class.java)
+                startActivity(intent)
             }
             R.id.search -> {
             }
