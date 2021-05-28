@@ -110,4 +110,12 @@ class MainActivity : AppCompatActivity() {
         binding.drawerLayout.open()
         return super.onSupportNavigateUp()
     }
+    override fun onBackPressed() {
+        val isOpen= binding.drawerLayout.isOpen
+        if(isOpen){
+            binding.drawerLayout.close()
+        }else{
+            super.onBackPressed()
+        }
+    }
 }
