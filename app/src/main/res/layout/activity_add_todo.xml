@@ -111,7 +111,7 @@
 
 
         <com.google.android.gms.maps.MapView
-            android:id="@+id/mapView_add1"
+            android:id="@+id/mapView"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_marginTop="5dp"
@@ -143,6 +143,16 @@
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp" />
 
+        <TextView
+            android:id="@+id/textConfirmTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="time"
+            android:textStyle="bold"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"/>
+
         <include
             layout = "@layout/add_todo_categorybox"
             android:id="@+id/dropDownSetLocation"
@@ -152,13 +162,17 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp" />
 
-        <com.google.android.gms.maps.MapView
-            android:id="@+id/mapView_add2"
+        <EditText
+            android:id="@+id/editTextRadius"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/textinputborder"
+            android:padding="10dp"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp" />
+            android:layout_marginRight="15dp"
+            android:inputType="phone"
+            android:hint="알림 반경을 입력해주세요(임시)" />
 
         <Button
             android:id="@+id/submitButton"

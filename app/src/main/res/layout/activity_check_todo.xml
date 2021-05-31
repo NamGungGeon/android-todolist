@@ -9,6 +9,7 @@
     android:padding="20dp">
 
     <TextView
+        android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="제목"
@@ -63,7 +64,7 @@
 
 
     <com.google.android.gms.maps.MapView
-        android:id="@+id/mapView_add3"
+        android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
@@ -90,7 +91,7 @@
 
     <include
         layout = "@layout/check_todo_category"
-        android:id="@+id/checkLocation"
+        android:id="@+id/checkRadius"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
