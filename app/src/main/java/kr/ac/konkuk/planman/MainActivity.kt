@@ -11,6 +11,9 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     val todoListVisualizers:ArrayList<Fragment> = ArrayList()
 
+    //임시 변수
+    val CATEGORY_REQUEST_CODE = 100
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -37,6 +40,12 @@ class MainActivity : AppCompatActivity() {
                 val intent= Intent(applicationContext, AddTodoActivity::class.java)
                 startActivity(intent)
             }
+
+//            //임시 : 실제로는 SettingActivity 나오게끔 바꿀것
+//            settingImg.setOnClickListener {
+//                val intent = Intent(applicationContext, CategoryListActivity::class.java)
+//                startActivityForResult(intent, CATEGORY_REQUEST_CODE)
+//            }
         }
     }
 }
