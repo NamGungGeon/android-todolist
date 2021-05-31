@@ -23,7 +23,7 @@
             android:textSize="30sp" />
 
         <ImageView
-            android:id="@+id/imageView3"
+            android:id="@+id/deleteImg"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_margin="5dp"
@@ -50,7 +50,7 @@
                 android:textSize="24sp" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/categoryPreview2"
+                android:id="@+id/categoryPreviewModify"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -81,16 +81,16 @@
                     android:textSize="18sp" />
 
                 <EditText
-                    android:id="@+id/categoryNameText2"
+                    android:id="@+id/categoryNameEditTextModify"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/textinputborder"
-                    android:gravity="top|left"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
-                    android:padding="10dp"
+                    android:background="@drawable/textinputborder"
                     android:ems="10"
-                    android:inputType="textPersonName" />
+                    android:gravity="top|left"
+                    android:inputType="textPersonName"
+                    android:padding="10dp" />
 
 
             </LinearLayout>
@@ -167,12 +167,15 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/categoryAddTodoBtn1"
+            android:id="@+id/categoryModifyTodoBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_margin="16dp"
-            android:text="카테고리 추가" />
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="카테고리 수정" />
     </RelativeLayout>
 
 </LinearLayout>

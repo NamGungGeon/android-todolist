@@ -37,7 +37,7 @@
                 android:textSize="24sp" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/categoryPreview1"
+                android:id="@+id/categoryPreviewAdd"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -68,7 +68,7 @@
                     android:textSize="18sp" />
 
                 <EditText
-                    android:id="@+id/categoryNameText"
+                    android:id="@+id/categoryNameEditTextAdd"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/textinputborder"
@@ -154,7 +154,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/categoryAddTodoBtn1"
+            android:id="@+id/categoryAddTodoBtn_add"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
