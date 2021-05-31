@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kr.ac.konkuk.planman.databinding.FragmentListTodoBinding
 import java.time.LocalDateTime
 
 class ListTodoFragment : Fragment() {

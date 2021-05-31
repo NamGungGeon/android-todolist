@@ -23,17 +23,16 @@ class ListAdapter(val items:ArrayList<MyData>) : RecyclerView.Adapter<ListAdapte
     }
 
     override fun onBindViewHolder(holder: ListAdapter.ViewHolder, position: Int) {
-        holder.itemTitleTextView.text = items[position].title
+        holder.titleTextView.text = items[position].title
 
         val titleType = items[position].type
         if (titleType == "업무") {
-            holder.itemTitleTextView.setBackgroundResource(R.drawable.list_edge_work)
+            holder.titleTextView.setBackgroundResource(R.drawable.list_edge_work)
         } else if (titleType == "약속") {
-            holder.itemTitleTextView.setBackgroundResource(R.drawable.list_edge_appointment)
+            holder.titleTextView.setBackgroundResource(R.drawable.list_edge_appointment)
         } else if (titleType == "구매") {
-            holder.itemTitleTextView.setBackgroundResource(R.drawable.list_edge_purchase)
+            holder.titleTextView.setBackgroundResource(R.drawable.list_edge_purchase)
         }
-
     }
 
 

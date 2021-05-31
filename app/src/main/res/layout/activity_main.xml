@@ -79,7 +79,7 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/categoryTitleText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
@@ -88,8 +88,7 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/categoryTitleText"
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
