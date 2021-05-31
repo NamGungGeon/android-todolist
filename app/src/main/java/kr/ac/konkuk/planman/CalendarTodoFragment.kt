@@ -5,8 +5,8 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.annotation.ColorRes
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -21,26 +21,17 @@ import com.kizitonwose.calendarview.ui.ViewContainer
 import kr.ac.konkuk.planman.databinding.CalendarDayLayoutBinding
 import kr.ac.konkuk.planman.databinding.CalendarHeaderLayoutBinding
 import kr.ac.konkuk.planman.databinding.FragmentCalendarTodoBinding
-import java.time.LocalDateTime
+import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.time.temporal.WeekFields
 import java.util.*
+import kotlin.collections.ArrayList
 
-
-data class Flight(
-    val time: LocalDateTime,
-    val departure: Airport,
-    val destination: Airport,
-    @ColorRes val color: Int
-) {
-    data class Airport(val city: String, val code: String)
-}
 
 class CalendarTodoFragment : Fragment() {
 
     private lateinit var binding: FragmentCalendarTodoBinding
-    private val flights = generateFlights().groupBy { it.time.toLocalDate() }
 
 
     val daysOfWeek = daysOfWeekFromLocale()
@@ -57,58 +48,14 @@ class CalendarTodoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding = FragmentCalendarTodoBinding.bind(view)
-        binding.exFiveRv.apply {
-            layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
-            addItemDecoration(DividerItemDecoration(requireContext(), RecyclerView.VERTICAL))
-        }
+        initCalendar()
+    }
 
+    private fun setCalendarMonth(month: YearMonth = YearMonth.now()) {
         binding.apply {
-            calendarView.dayBinder = object : DayBinder<DayViewContainer> {
-                // Called only when a new container is needed.
-                override fun create(view: View) = DayViewContainer(view)
 
-                // Called every time we need to reuse a container.
-                override fun bind(container: DayViewContainer, day: CalendarDay) {
-                    container.day = day
-                    val textView = container.binding.exFiveDayText
-                    val layout = container.binding.exFiveDayLayout
-                    textView.text = day.date.dayOfMonth.toString()
-
-                    val flightTopView = container.binding.exFiveDayFlightTop
-                    val flightBottomView = container.binding.exFiveDayFlightBottom
-                    flightTopView.background = null
-                    flightBottomView.background = null
-
-                    if (day.owner == DayOwner.THIS_MONTH) {
-                        textView.setTextColorRes(R.color.black)
-//                        layout.setBackgroundResource(if (selectedDate == day.date) R.drawable.example_5_selected_bg else 0)
-
-                        val flights = flights[day.date]
-                        if (flights != null) {
-                            if (flights.count() == 1) {
-                                flightBottomView.setBackgroundColor(
-                                    view.context.getColorCompat(
-                                        flights[0].color
-                                    )
-                                )
-                            } else {
-                                flightTopView.setBackgroundColor(view.context.getColorCompat(flights[0].color))
-                                flightBottomView.setBackgroundColor(
-                                    view.context.getColorCompat(
-                                        flights[1].color
-                                    )
-                                )
-                            }
-                        }
-                    } else {
-                        textView.setTextColorRes(R.color.example_5_text_grey)
-                        layout.background = null
-                    }
-                }
-            }
-            val currentMonth = YearMonth.now()
-            val firstMonth = currentMonth.minusMonths(10)
-            val lastMonth = currentMonth.plusMonths(10)
+            //calendar header
+            val currentMonth = month
             val firstDayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
             calendarView.setup(currentMonth, currentMonth, firstDayOfWeek)
 
@@ -137,14 +84,118 @@ class CalendarTodoFragment : Fragment() {
                     }
                 }
             }
+
+            prevMonthBtn.setOnClickListener {
+                setCalendarMonth(month.minusMonths(1))
+            }
+            nextMonthBtn.setOnClickListener {
+                setCalendarMonth(month.plusMonths(1))
+            }
         }
+    }
+
+    private fun initCalendar() {
+        binding.exFiveRv.apply {
+            layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+            addItemDecoration(DividerItemDecoration(requireContext(), RecyclerView.VERTICAL))
+        }
+
+        binding.apply {
+            //calendar body
+            calendarView.dayBinder = object : DayBinder<DayViewContainer> {
+                // Called only when a new container is needed.
+                override fun create(view: View) = DayViewContainer(view)
+
+                // Called every time we need to reuse a container.
+                override fun bind(container: DayViewContainer, day: CalendarDay) {
+                    container.day = day
+                    val dayText = container.binding.dayText
+                    dayText.text = day.date.dayOfMonth.toString()
+
+                    val layout = container.binding.exFiveDayLayout
+                    layout.setOnClickListener {
+                        //show selected day's todoList
+                    }
+
+                    if (day.owner == DayOwner.THIS_MONTH)
+                        container.binding.apply {
+                            val dayTodoItems =
+                                SimpleListRecyclerViewAdapter.SimpleListItem.Builder()
+                            val dayTodoList = getDayTodoList(day.date)
+                            dayTodoList.map { todo ->
+                                when {
+                                    dayTodoItems.list.size <= 2 -> {
+                                        dayTodoItems.append("", null) { holder ->
+                                            holder.labelView.apply {
+                                                this.layoutParams.height = 8
+                                                (this.layoutParams as LinearLayout.LayoutParams).setMargins(
+                                                    0,
+                                                    0,
+                                                    0,
+                                                    4
+                                                )
+                                                setBackgroundColor(resources.getColor(R.color.red_800))
+                                            }
+                                        }
+                                    }
+                                    dayTodoItems.list.size == 3 -> {
+                                        dayTodoItems.append(
+                                            "+${dayTodoItems.list.size - 2}",
+                                            null
+                                        ) { holder ->
+                                            holder.labelView.apply {
+                                                this.layoutParams.height = 8
+                                                (this.layoutParams as LinearLayout.LayoutParams).setMargins(
+                                                    0,
+                                                    0,
+                                                    0,
+                                                    4
+                                                )
+                                                setBackgroundColor(resources.getColor(R.color.red_800))
+                                            }
+                                        }
+                                    }
+                                    else -> {
+                                    }
+                                }
+                            }
+
+                            dayTodoListRecyclerView.adapter =
+                                SimpleListRecyclerViewAdapter(dayTodoItems.build())
+                        }
+
+                    if (day.date.isEqual(LocalDate.now())) {
+                        layout.background =
+                            resources.getDrawable(R.drawable.calendar_today_background)
+                    } else {
+                        layout.background =
+                            resources.getDrawable(R.drawable.calendar_day_background)
+                    }
+                    if (day.owner == DayOwner.THIS_MONTH) {
+                        dayText.setTextColorRes(R.color.black)
+                    } else {
+                        dayText.setTextColorRes(R.color.example_5_text_grey)
+                    }
+                }
+            }
+
+            setCalendarMonth()
+        }
+    }
+
+    private fun getDayTodoList(time: LocalDate): ArrayList<MyData> {
+        //with dummy data
+        val dayTodoList = ArrayList<MyData>()
+        val iterCnt = Random().nextInt(5)
+        if (iterCnt > 0)
+            for (idx in 0..iterCnt) {
+                dayTodoList.add(MyData())
+            }
+        return dayTodoList
     }
 }
 
 class DayViewContainer(view: View) : ViewContainer(view) {
     lateinit var day: CalendarDay // Will be set when this container is bound.
     val binding = CalendarDayLayoutBinding.bind(view)
-
-    // With ViewBinding
-    // val textView = CalendarDayLayoutBinding.bind(view).calendarDayText
 }

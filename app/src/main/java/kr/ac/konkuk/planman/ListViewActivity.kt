@@ -40,9 +40,9 @@ class ListViewActivity : AppCompatActivity() {
 
     private fun initData() {
         data = ArrayList()
-        data.add(MyData("보고서 올리기", "계약 관련 보고서 김과장한테 올려야함", "업무", "noInfo", "noInfo", "noInfo"))
-        data.add(MyData("고성호 만나기", "일요일 밤 10시", "약속", "noInfo", "noInfo", "noInfo"))
-        data.add(MyData("이마트", "이마트에서 계란 사기", "구매", "noInfo", "noInfo", "noInfo"))
+        data.add(MyData("보고서 올리기", "계약 관련 보고서 김과장한테 올려야함", "업무", "noInfo", "noInfo", "noInfo", null, null))
+        data.add(MyData("고성호 만나기", "일요일 밤 10시", "약속", "noInfo", "noInfo", "noInfo", null, null))
+        data.add(MyData("이마트", "이마트에서 계란 사기", "구매", "noInfo", "noInfo", "noInfo", null, null))
     }
 
     private fun initRecyclerView() {

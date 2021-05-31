@@ -2,9 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingTop="1dp"
-    android:paddingBottom="1dp">
+    android:layout_height="wrap_content">
 
     <include
         android:id="@+id/legendLayout"
@@ -12,8 +10,4 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center" />
-    <View
-        android:background="@color/example_5_text_grey"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"/>
 </LinearLayout>
