@@ -39,6 +39,11 @@ class ListTodoFragment : Fragment() {
         data.add(MyData("이마트", "이마트에서 계란 사기", "구매", "noInfo", "noInfo", "noInfo", LocalDateTime.now(), "noInfo"))
     }
 
+    fun setCustomData(data: ArrayList<MyData>) {
+        this.data = data
+        initRecyclerView()
+    }
+
     private fun initRecyclerView() {
         recyclerView = view!!.findViewById<RecyclerView>(R.id.list_recyclerView)
         recyclerView.layoutManager =
