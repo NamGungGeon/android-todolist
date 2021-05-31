@@ -18,6 +18,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     val todoListVisualizers: ArrayList<Fragment> = ArrayList()
     lateinit var drawerToggle: ActionBarDrawerToggle
+    var selectedCategory: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +53,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun propagateUpdateCategory(selectedCategory: String) {
+        //propagate to all fragments in viewPager
+        this.selectedCategory = selectedCategory
+    }
+
     private fun initActionBar() {
         binding.apply {
             drawerToggle = ActionBarDrawerToggle(
@@ -67,7 +73,8 @@ class MainActivity : AppCompatActivity() {
                 // true, then it has handled the app icon touch event
                 if (drawerToggle.onOptionsItemSelected(it)) {
                     val categoryName = it.title
-                    Toast.makeText(this@MainActivity, "${categoryName} 선택됨", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivity, "${categoryName} 선택됨", Toast.LENGTH_SHORT)
+                        .show()
                     drawerLayout.close()
                     true
                 }
@@ -86,7 +93,20 @@ class MainActivity : AppCompatActivity() {
         binding.navView.menu.apply {
             clear()
             categories.map {
-                add(it)
+                val categoryName = it
+                val addIcon = layoutInflater.inflate(R.layout.category_add, null, false)
+                addIcon.setOnClickListener {
+                    //add
+                    val intent = Intent(applicationContext, AddTodoActivity::class.java)
+                    intent.putExtra("category", categoryName)
+                    startActivity(intent)
+                }
+
+                add(it).setActionView(addIcon).setOnMenuItemClickListener {
+                    //show only todoLists about selected category
+                    propagateUpdateCategory(categoryName)
+                    false
+                }
             }
         }
     }
@@ -131,10 +151,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        val isOpen= binding.drawerLayout.isOpen
-        if(isOpen){
+        val isOpen = binding.drawerLayout.isOpen
+        if (isOpen) {
             binding.drawerLayout.close()
-        }else{
+        } else {
             super.onBackPressed()
         }
     }
