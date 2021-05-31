@@ -28,6 +28,7 @@
                 android:src="@drawable/ic_baseline_search_24" />
 
             <ImageButton
+                android:id="@+id/settingImg"
                 style="@style/icon"
                 android:layout_margin="8dp"
                 android:src="@drawable/ic_baseline_settings_24" />
@@ -82,7 +83,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/categoryTitleText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"

@@ -4,14 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.time.LocalDateTime
 
 class ListTodoFragment : Fragment() {
-    lateinit var data: ArrayList<MyData>
+    var data: ArrayList<MyData> = ArrayList()
     lateinit var recyclerView: RecyclerView
+    private lateinit var binding: FragmentListTodoBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -23,6 +25,8 @@ class ListTodoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding = FragmentListTodoBinding.bind(view)
 
         initData()
         initRecyclerView()
