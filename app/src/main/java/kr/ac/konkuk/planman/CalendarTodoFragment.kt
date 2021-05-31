@@ -131,7 +131,7 @@ class CalendarTodoFragment : Fragment() {
                             }
                             dayTodoList.map { todo ->
                                 when {
-                                    dayTodoItems.list.size <= 2 -> {
+                                    dayTodoItems.list.size < 3 -> {
                                         dayTodoItems.append("", onDaySelected) { holder ->
                                             holder.labelView.apply {
                                                 this.layoutParams.height = 12
@@ -147,7 +147,7 @@ class CalendarTodoFragment : Fragment() {
                                     }
                                     dayTodoItems.list.size == 3 -> {
                                         dayTodoItems.append(
-                                            "+${dayTodoItems.list.size - 2}",
+                                            "+${dayTodoList.size - 3}",
                                             onDaySelected
                                         ) { holder ->
                                             holder.labelView.apply {
