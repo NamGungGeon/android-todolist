@@ -45,7 +45,7 @@
 
     <include
         layout = "@layout/check_todo_category"
-        android:id="@+id/dropDownWebAddress"
+        android:id="@+id/checkWebAddress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
@@ -54,7 +54,7 @@
 
     <include
         layout = "@layout/check_todo_category"
-        android:id="@+id/dropDownWebAddress"
+        android:id="@+id/checkPhoneNumber"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
@@ -81,7 +81,7 @@
 
     <include
         layout = "@layout/check_todo_category"
-        android:id="@+id/dropDownWebAddress"
+        android:id="@+id/checkDateTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
@@ -90,7 +90,7 @@
 
     <include
         layout = "@layout/check_todo_category"
-        android:id="@+id/dropDownWebAddress"
+        android:id="@+id/checkLocation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
