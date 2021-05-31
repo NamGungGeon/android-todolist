@@ -50,11 +50,11 @@ class CategoryListAdapter(val items:ArrayList<CategoryData>) : RecyclerView.Adap
 
             //textSize select : 크게, 보통, 작게
             if (items[position].textSize == "크게") {
-                typeText.textSize == 22f
+                typeText.textSize = 24f
             } else if (items[position].textSize == "보통") {
-                typeText.textSize == 18f
+                typeText.textSize = 18f
             } else {    //작게
-                typeText.textSize == 14f
+                typeText.textSize = 14f
             }
 
             //textColor select : 파랑, 노랑, 빨강, 검정

@@ -4,15 +4,15 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import kr.ac.konkuk.planman.databinding.ActivityCategoryListBinding
 
 class CategoryListActivity : AppCompatActivity() {
 
-    private val ADD_TO_DO_REQUEST = 100
-    private val MODIFY_TO_DO_REQUEST = 200
+    private val ADD_TO_DO_REQUEST_CODE = 100
+    private val MODIFY_TO_DO_REQUEST_CODE = 200
+    private var selectedItemPosition : Int = 0
 
     var categoryData:ArrayList<CategoryData> = ArrayList()
     lateinit var binding: ActivityCategoryListBinding
@@ -31,9 +31,9 @@ class CategoryListActivity : AppCompatActivity() {
 
     private fun initAddBtn() {
         binding.apply {
-            categoryAddTodoBtn1.setOnClickListener {
+            categoryAddTodoBtn.setOnClickListener {
                 val intent= Intent(this@CategoryListActivity, CategoryAddActivity::class.java)
-                startActivityForResult(intent, ADD_TO_DO_REQUEST)
+                startActivityForResult(intent, ADD_TO_DO_REQUEST_CODE)
             }
         }
     }
@@ -59,10 +59,11 @@ class CategoryListActivity : AppCompatActivity() {
                     data: CategoryData,
                     position: Int
                 ) {
+                    selectedItemPosition = position
                     val intent = Intent(this@CategoryListActivity, CategoryModifyActivity::class.java)
                     intent.putExtra("category", data)
                     //Log.e("test", "success")
-                    startActivityForResult(intent, MODIFY_TO_DO_REQUEST)   //startActivityForResult
+                    startActivityForResult(intent, MODIFY_TO_DO_REQUEST_CODE)   //startActivityForResult
                 }
 
             }
@@ -70,8 +71,82 @@ class CategoryListActivity : AppCompatActivity() {
         }
     }
 
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//        //resultCode에 따라서 intent에 실린 값 받아와서 실행하게끔한다.
-//    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when(requestCode) {
+            ADD_TO_DO_REQUEST_CODE -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    val getData = data?.getSerializableExtra("addCategoryData") as CategoryData
+                    categoryData.add(getData)
+                    adapter = CategoryListAdapter(categoryData)
+                    adapter.itemClickListener = object : CategoryListAdapter.OnItemClickListener {
+                        override fun OnItemClick(
+                                holder: CategoryListAdapter.ViewHolder,
+                                view: View,
+                                data: CategoryData,
+                                position: Int
+                        ) {
+                            selectedItemPosition = position
+                            val intent = Intent(this@CategoryListActivity, CategoryModifyActivity::class.java)
+                            intent.putExtra("category", data)
+                            //Log.e("test", "success")
+                            startActivityForResult(intent, MODIFY_TO_DO_REQUEST_CODE)   //startActivityForResult
+                        }
+
+                    }
+                    binding!!.categoryList.adapter = adapter
+                }
+            }
+
+            MODIFY_TO_DO_REQUEST_CODE -> {
+                if (resultCode == Activity.RESULT_CANCELED) {       //삭제 될때
+                    categoryData.removeAt(selectedItemPosition)
+                    adapter = CategoryListAdapter(categoryData)
+                    adapter.itemClickListener = object : CategoryListAdapter.OnItemClickListener {
+                        override fun OnItemClick(
+                                holder: CategoryListAdapter.ViewHolder,
+                                view: View,
+                                data: CategoryData,
+                                position: Int
+                        ) {
+                            selectedItemPosition = position
+                            val intent = Intent(this@CategoryListActivity, CategoryModifyActivity::class.java)
+                            intent.putExtra("category", data)
+                            //Log.e("test", "success")
+                            startActivityForResult(intent, MODIFY_TO_DO_REQUEST_CODE)   //startActivityForResult
+                        }
+
+                    }
+                    binding!!.categoryList.adapter = adapter
+                }
+                else if (resultCode == Activity.RESULT_OK) {    //수정 될때
+                    val getDataFromModify = data?.getSerializableExtra("modifyTodo") as CategoryData
+                    categoryData[selectedItemPosition].type = getDataFromModify.type
+                    categoryData[selectedItemPosition].textSize = getDataFromModify.textSize
+                    categoryData[selectedItemPosition].textColor = getDataFromModify.textColor
+                    categoryData[selectedItemPosition].textStyle = getDataFromModify.textStyle
+
+                    adapter = CategoryListAdapter(categoryData)
+
+                    adapter.itemClickListener = object : CategoryListAdapter.OnItemClickListener {
+                        override fun OnItemClick(
+                                holder: CategoryListAdapter.ViewHolder,
+                                view: View,
+                                data: CategoryData,
+                                position: Int
+                        ) {
+                            selectedItemPosition = position
+                            val intent = Intent(this@CategoryListActivity, CategoryModifyActivity::class.java)
+                            intent.putExtra("category", data)
+                            //Log.e("test", "success")
+                            startActivityForResult(intent, MODIFY_TO_DO_REQUEST_CODE)   //startActivityForResult
+                        }
+                    }
+
+                    binding!!.categoryList.adapter = adapter
+                }
+            }
+        }
+
+    }
 }
