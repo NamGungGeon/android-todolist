@@ -3,48 +3,84 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:clickable="true"
     android:focusable="true"
     android:padding="16dp"
     android:orientation="vertical">
-    <LinearLayout
-        android:gravity="center_vertical"
-        android:layout_marginBottom="16dp"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:layout_weight="1"
-            android:textStyle="bold"
-            android:textSize="24dp"
-            android:id="@+id/calendar_month"
-            android:textColor="@color/black"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <ImageButton
-                android:id="@+id/prevMonthBtn"
-                android:src="@drawable/ic_baseline_arrow_back_ios_24"
-                style="@style/icon"/>
-            <ImageButton
-                android:id="@+id/nextMonthBtn"
-                android:src="@drawable/ic_baseline_arrow_forward_ios_24"
-                style="@style/icon"/>
-        </LinearLayout>
-    </LinearLayout>
-    <com.kizitonwose.calendarview.CalendarView
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/calendarLayout_scrollView"
         android:overScrollMode="never"
-        android:id="@+id/calendarView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:cv_monthHeaderResource="@layout/calendar_header_layout"
-        app:cv_dayViewResource="@layout/calendar_day_layout" />
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/exFiveRv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:nestedScrollingEnabled="false" />
+        android:fillViewport="true">
+        <LinearLayout
+            android:descendantFocusability="blocksDescendants"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:gravity="center_vertical"
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_weight="1"
+                    android:textStyle="bold"
+                    android:textSize="24dp"
+                    android:id="@+id/calendar_month"
+                    android:textColor="@color/black"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <ImageButton
+                        android:id="@+id/prevMonthBtn"
+                        android:src="@drawable/ic_baseline_arrow_back_ios_24"
+                        style="@style/icon"/>
+                    <ImageButton
+                        android:id="@+id/nextMonthBtn"
+                        android:src="@drawable/ic_baseline_arrow_forward_ios_24"
+                        style="@style/icon"/>
+                </LinearLayout>
+            </LinearLayout>
+            <com.kizitonwose.calendarview.CalendarView
+                android:overScrollMode="never"
+                android:id="@+id/calendarView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:cv_monthHeaderResource="@layout/calendar_header_layout"
+                app:cv_dayViewResource="@layout/calendar_day_layout" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/exFiveRv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="32dp"/>
+
+            <TextView
+                android:visibility="gone"
+                android:layout_marginBottom="16dp"
+                android:textStyle="bold"
+                android:textSize="24dp"
+                android:id="@+id/selectedDayText"
+                android:textColor="@color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <fragment
+                tools:layout="@layout/fragment_list_todo"
+                android:name="kr.ac.konkuk.planman.ListTodoFragment"
+                android:id="@+id/list_todo_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="64dp"/>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>

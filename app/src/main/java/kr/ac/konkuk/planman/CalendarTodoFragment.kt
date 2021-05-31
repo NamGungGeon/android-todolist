@@ -2,9 +2,11 @@ package kr.ac.konkuk.planman
 
 import android.os.Bundle
 import android.util.TypedValue
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.children
@@ -49,9 +51,11 @@ class CalendarTodoFragment : Fragment() {
 
         binding = FragmentCalendarTodoBinding.bind(view)
         initCalendar()
+
     }
 
     private fun setCalendarMonth(month: YearMonth = YearMonth.now()) {
+        showTodoAsList(ArrayList<MyData>())
         binding.apply {
 
             //calendar header
@@ -113,21 +117,24 @@ class CalendarTodoFragment : Fragment() {
                     dayText.text = day.date.dayOfMonth.toString()
 
                     val layout = container.binding.exFiveDayLayout
-                    layout.setOnClickListener {
-                        //show selected day's todoList
-                    }
 
                     if (day.owner == DayOwner.THIS_MONTH)
                         container.binding.apply {
+
                             val dayTodoItems =
                                 SimpleListRecyclerViewAdapter.SimpleListItem.Builder()
                             val dayTodoList = getDayTodoList(day.date)
+
+                            val onDaySelected = fun() {
+                                //show selected day's todoList
+                                showTodoAsList(dayTodoList, day.date)
+                            }
                             dayTodoList.map { todo ->
                                 when {
                                     dayTodoItems.list.size <= 2 -> {
-                                        dayTodoItems.append("", null) { holder ->
+                                        dayTodoItems.append("", onDaySelected) { holder ->
                                             holder.labelView.apply {
-                                                this.layoutParams.height = 8
+                                                this.layoutParams.height = 12
                                                 (this.layoutParams as LinearLayout.LayoutParams).setMargins(
                                                     0,
                                                     0,
@@ -141,17 +148,18 @@ class CalendarTodoFragment : Fragment() {
                                     dayTodoItems.list.size == 3 -> {
                                         dayTodoItems.append(
                                             "+${dayTodoItems.list.size - 2}",
-                                            null
+                                            onDaySelected
                                         ) { holder ->
                                             holder.labelView.apply {
-                                                this.layoutParams.height = 8
-                                                (this.layoutParams as LinearLayout.LayoutParams).setMargins(
+                                                textSize= 8f
+                                                textAlignment= TextView.TEXT_ALIGNMENT_TEXT_END
+                                                (layoutParams as LinearLayout.LayoutParams).setMargins(
                                                     0,
                                                     0,
                                                     0,
                                                     4
                                                 )
-                                                setBackgroundColor(resources.getColor(R.color.red_800))
+                                                setTextColor(resources.getColor(R.color.black))
                                             }
                                         }
                                     }
@@ -162,6 +170,9 @@ class CalendarTodoFragment : Fragment() {
 
                             dayTodoListRecyclerView.adapter =
                                 SimpleListRecyclerViewAdapter(dayTodoItems.build())
+                            layout.setOnClickListener {
+                                onDaySelected()
+                            }
                         }
 
                     if (day.date.isEqual(LocalDate.now())) {
@@ -189,9 +200,32 @@ class CalendarTodoFragment : Fragment() {
         val iterCnt = Random().nextInt(5)
         if (iterCnt > 0)
             for (idx in 0..iterCnt) {
-                dayTodoList.add(MyData())
+                val myData = MyData()
+                myData.title = "테스트 할일"
+                myData.content = "테스트 할일"
+                dayTodoList.add(myData)
             }
         return dayTodoList
+    }
+
+    private fun showTodoAsList(dayTodoList: ArrayList<MyData>, date: LocalDate? = null) {
+
+
+        val fragment: ListTodoFragment =
+            childFragmentManager.findFragmentById(R.id.list_todo_fragment) as ListTodoFragment
+        fragment.setCustomData(dayTodoList)
+        fragment.view?.post {
+            if (date != null) {
+                binding.selectedDayText.text =
+                    "${date.year}년 ${date.monthValue}월 ${date.dayOfMonth}일의 할 일"
+                binding.selectedDayText.visibility = View.VISIBLE
+                binding.calendarLayoutScrollView.fullScroll(View.FOCUS_DOWN)
+            }else{
+                binding.selectedDayText.visibility = View.GONE
+                binding.calendarLayoutScrollView.fullScroll(View.FOCUS_UP)
+            }
+
+        }
     }
 }
 
