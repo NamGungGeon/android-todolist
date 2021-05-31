@@ -37,6 +37,7 @@ class CalendarTodoFragment : Fragment() {
 
 
     val daysOfWeek = daysOfWeekFromLocale()
+    val MAX_COUNT_TODO_PER_DAY= 2
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -131,10 +132,12 @@ class CalendarTodoFragment : Fragment() {
                             }
                             dayTodoList.map { todo ->
                                 when {
-                                    dayTodoItems.list.size < 3 -> {
-                                        dayTodoItems.append("", onDaySelected) { holder ->
+                                    dayTodoItems.list.size < MAX_COUNT_TODO_PER_DAY -> {
+                                        dayTodoItems.append(todo.title!!, onDaySelected) { holder ->
                                             holder.labelView.apply {
-                                                this.layoutParams.height = 12
+                                                setLines(1)
+                                                textSize= 6f
+                                                setTextColor(resources.getColor(R.color.white))
                                                 (this.layoutParams as LinearLayout.LayoutParams).setMargins(
                                                     0,
                                                     0,
@@ -145,9 +148,9 @@ class CalendarTodoFragment : Fragment() {
                                             }
                                         }
                                     }
-                                    dayTodoItems.list.size == 3 -> {
+                                    dayTodoItems.list.size == MAX_COUNT_TODO_PER_DAY -> {
                                         dayTodoItems.append(
-                                            "+${dayTodoList.size - 3}",
+                                            "+${dayTodoList.size - MAX_COUNT_TODO_PER_DAY}",
                                             onDaySelected
                                         ) { holder ->
                                             holder.labelView.apply {
