@@ -3,12 +3,11 @@ package kr.ac.konkuk.planman
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
-import android.content.Context.dele
 
 class DB(val context: Context) {
 
     private var dbHelper = DBHelper(context)
-    
+
     fun resetDB() {
         context.deleteDatabase("planman.db")
         dbHelper = DBHelper(context)
