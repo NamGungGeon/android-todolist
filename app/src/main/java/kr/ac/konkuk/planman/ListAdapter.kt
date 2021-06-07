@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class ListAdapter(val items:ArrayList<MyData>) : RecyclerView.Adapter<ListAdapter.ViewHolder>(){
+class ListAdapter(val items:ArrayList<MyData2>) : RecyclerView.Adapter<ListAdapter.ViewHolder>(){
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val titleTextView : TextView= itemView.findViewById(R.id.todoListText)

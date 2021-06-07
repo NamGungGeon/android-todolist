@@ -1,23 +1,37 @@
 package kr.ac.konkuk.planman
 
+import android.content.ContentValues
 import java.io.Serializable
-import java.time.LocalDateTime
 
-class MyData2(
-    var title: String?,
-    var content: String?,
-    var type: String?,
-    var attachment: Attachment?,
-    var notification: Notification?,
-) : Serializable {
-    class Attachment(
-        var webSite: String?,
-        var phoneNumber: String?,
-        var location: String?,
-    ) : Serializable
+class MyData2 : Serializable {
+    var id: Long = -1
+    var title: String? = null
+    var content: String? = null
+    var type: String? = null
+    var attachment: Attachment = Attachment()
+    var notification: Notification = Notification()
 
-    class Notification(
-        var notifyDateTime: LocalDateTime?,
-        var notifyRadius: String?
-    ) : Serializable
+    class Attachment : Serializable {
+        var webSite: String? = null
+        var phoneNumber: String? = null
+        var location: String? = null
+    }
+
+    class Notification : Serializable {
+        var notifyDateTime: String? = null
+        var notifyRadius: String? = null
+    }
+
+    fun getContentValues() : ContentValues{
+        val cv = ContentValues()
+        cv.put("title", title)
+        cv.put("content", content)
+        cv.put("type", type)
+        cv.put("att_webSite", attachment.webSite)
+        cv.put("att_phoneNumber", attachment.phoneNumber)
+        cv.put("att_location", attachment.location)
+        cv.put("not_notifyDateTime", notification.notifyDateTime)
+        cv.put("not_notifyRadius", notification.notifyRadius)
+        return cv
+    }
 }

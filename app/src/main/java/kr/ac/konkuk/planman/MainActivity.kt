@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
 
             addTodoBtn.setOnClickListener {
                 val intent= Intent(applicationContext, AddTodoActivity::class.java)
-                intent.putExtra("data", MyData())
+                intent.putExtra("data", MyData2())
                 startActivity(intent)
             }
 

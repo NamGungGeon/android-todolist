@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter
 class AddTodoActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityAddTodoBinding
-    lateinit var data: MyData
+    lateinit var data: MyData2
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,9 +24,9 @@ class AddTodoActivity : AppCompatActivity() {
         binding = ActivityAddTodoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        data = intent.getSerializableExtra("data") as MyData
+        data = intent.getSerializableExtra("data") as MyData2
         init()
-        if (data.title != null)
+        if (data.id.toInt()  != -1)
             initData()
     }
 
@@ -63,15 +63,17 @@ class AddTodoActivity : AppCompatActivity() {
             val dlgBuilder = AlertDialog.Builder(this)
             dlgBuilder.setView(dlgBinding.root).setPositiveButton("확인") {
                 _, _ ->
-                data.notifyDateTime = LocalDateTime.of(
-                    year,
-                    month + 1,
-                    dayOfMonth,
-                    dlgBinding.timePicker.hour,
-                    dlgBinding.timePicker.minute
-                )
+                data.notification.notifyDateTime = "${year}-${month + 1}-${dayOfMonth}" +
+                        "-${dlgBinding.timePicker.hour}-${dlgBinding.timePicker.minute}"
+
+
+                var dateTime = LocalDateTime.of(
+                year,
+                month + 1,
+                dayOfMonth,
+                dlgBinding.timePicker.hour,
+                dlgBinding.timePicker.minute)
                 var dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분")
-                var dateTime = data.notifyDateTime
                 binding.textConfirmTime.text = dateTime!!.format(dateTimeFormatter)
                 binding.textConfirmTime.isVisible = true
             }
@@ -90,13 +92,16 @@ class AddTodoActivity : AppCompatActivity() {
             data.title = binding.editTextTodoTitle.text.toString()
             data.content = binding.editTextTodo.text.toString()
             data.type = "tmp"
-            data.webSite = binding.editTextTextWebAddress.text.toString()
-            data.location = "tmp"
-            data.phoneNumber = binding.editTextPhoneNumber.text.toString()
-            data.notifyRadius = binding.editTextRadius.text.toString()
+            data.attachment.webSite = binding.editTextTextWebAddress.text.toString()
+            data.attachment.location = "tmp"
+            data.attachment.phoneNumber = binding.editTextPhoneNumber.text.toString()
+            data.notification.notifyRadius = binding.editTextRadius.text.toString()
+
+            val db = DB(this)
+            db.insertMyData(data)
 
             val intent = Intent(this, MainActivity::class.java)
-            intent.putExtra("data", data) // 나중에 FileIO나 DB로 변경
+//            intent.putExtra("data", data) // 나중에 FileIO나 DB로 변경
             startActivity(intent)
             Toast.makeText(this, "할일이 추가되었습니다", Toast.LENGTH_LONG).show()
         }
@@ -106,7 +111,7 @@ class AddTodoActivity : AppCompatActivity() {
     private fun initData() {
         binding.editTextTodoTitle.setText(data.title)
         binding.editTextTodo.setText(data.content)
-        binding.editTextTextWebAddress.setText(data.webSite)
-        binding.editTextPhoneNumber.setText(data.phoneNumber)
+        binding.editTextTextWebAddress.setText(data.attachment.webSite)
+        binding.editTextPhoneNumber.setText(data.attachment.phoneNumber)
     }
 }
