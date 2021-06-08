@@ -1,6 +1,7 @@
 package kr.ac.konkuk.planman
 
 import android.content.Intent
+import android.content.IntentFilter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -18,6 +19,7 @@ class AddTodoActivity : AppCompatActivity() {
     lateinit var binding: ActivityAddTodoBinding
     lateinit var data: MyData
 
+    lateinit var timeNotificationManager: TimeAlarmManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,13 +97,19 @@ class AddTodoActivity : AppCompatActivity() {
             data.phoneNumber = binding.editTextPhoneNumber.text.toString()
             data.notifyRadius = binding.editTextRadius.text.toString()
 
+            //시간 예약
+            timeNotificationManager = TimeAlarmManager()
+            if (data.notifyDateTime != null) {
+                timeNotificationManager.reservationTimeAlarm(data, this)
+            }
+
+
             val intent = Intent(this, MainActivity::class.java)
             intent.putExtra("data", data) // 나중에 FileIO나 DB로 변경
             startActivity(intent)
             Toast.makeText(this, "할일이 추가되었습니다", Toast.LENGTH_LONG).show()
         }
     }
-
 
     private fun initData() {
         binding.editTextTodoTitle.setText(data.title)
