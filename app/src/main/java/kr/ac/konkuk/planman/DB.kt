@@ -79,7 +79,7 @@ class DB(val context: Context) {
         db.close()
     }
 
-    fun readCategory(category: CategoryData) : ArrayList<CategoryData> {
+    fun readCategory() : ArrayList<CategoryData> {
         val db = dbHelper.readableDatabase
         val cursor: Cursor = db.rawQuery("SELECT * FROM category", null)
         val categoryList: ArrayList<CategoryData> = ArrayList()
