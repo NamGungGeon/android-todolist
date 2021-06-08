@@ -14,6 +14,8 @@ class MyData2(
         var webSite: String?,
         var phoneNumber: String?,
         var location: String?,
+        var locationLat: Double,
+        var locationLng: Double,
     ) : Serializable
 
     class Notification(

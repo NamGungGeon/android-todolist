@@ -28,6 +28,10 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        if (LocationManager.getInstance().requirePermission(this, 100)) {
+            LocationNotificationService.start(this)
+        }
+
         initUI()
         initActionBar()
     }
@@ -50,7 +54,7 @@ class MainActivity : AppCompatActivity() {
             todoListPager.offscreenPageLimit = todoListVisualizers.size
 
             addTodoBtn.setOnClickListener {
-                val intent= Intent(applicationContext, AddTodoActivity::class.java)
+                val intent = Intent(applicationContext, AddTodoActivity::class.java)
                 intent.putExtra("data", MyData())
                 startActivity(intent)
             }
@@ -166,6 +170,18 @@ class MainActivity : AppCompatActivity() {
             binding.drawerLayout.close()
         } else {
             super.onBackPressed()
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (LocationManager.getInstance().checkRequiredPermission(this)) {
+            LocationNotificationService.start(this)
         }
     }
 }
