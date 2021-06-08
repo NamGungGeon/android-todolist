@@ -3,8 +3,7 @@
     package="kr.ac.konkuk.planman">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-
-
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -12,18 +11,33 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Planman">
-        <activity android:name=".CheckTodoActivity"/>
-        <activity android:name=".CategoryModifyActivity"></activity>
+
+
+        <activity android:name=".CheckTodoActivity" />
+        <activity android:name=".CategoryModifyActivity" />
         <activity android:name=".CategoryAddActivity" />
         <activity android:name=".CategoryListActivity" />
         <activity android:name=".AddTodoActivity" />
-        <activity android:name=".MainActivity" android:theme="@style/Theme.Planman.NoActionBar">
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/Theme.Planman.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SettingActivity"/>
+
+        <receiver android:name=".TimeAlarmReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+
+        </receiver>
+
+        <activity android:name=".SettingActivity" />
     </application>
 
 </manifest>
