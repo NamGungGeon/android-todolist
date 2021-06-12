@@ -1,9 +1,13 @@
 package kr.ac.konkuk.planman
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -13,6 +17,7 @@ import kr.ac.konkuk.planman.databinding.AddTodoCategoryboxBinding
 import kr.ac.konkuk.planman.databinding.AddTodoTimepickerBinding
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 class AddTodoActivity : AppCompatActivity() {
 
@@ -66,11 +71,11 @@ class AddTodoActivity : AppCompatActivity() {
             dlgBuilder.setView(dlgBinding.root).setPositiveButton("확인") {
                 _, _ ->
                 data.notifyDateTime = LocalDateTime.of(
-                    year,
-                    month + 1,
-                    dayOfMonth,
-                    dlgBinding.timePicker.hour,
-                    dlgBinding.timePicker.minute
+                    year + 0,
+                    month + 1,  //+1
+                    dayOfMonth + 0,
+                    dlgBinding.timePicker.hour + 0,
+                    dlgBinding.timePicker.minute + 0
                 )
                 var dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분")
                 var dateTime = data.notifyDateTime
@@ -98,9 +103,23 @@ class AddTodoActivity : AppCompatActivity() {
             data.notifyRadius = binding.editTextRadius.text.toString()
 
             //시간 예약
+//            val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+//
+//            val tIntent = Intent(this, TimeAlarmReceiver::class.java)
+//            val calendar = Calendar.getInstance()
+//
+//            val pendingIntent = PendingIntent.getBroadcast(this, 0, tIntent, 0)
+
             timeNotificationManager = TimeAlarmManager()
             if (data.notifyDateTime != null) {
+                //sendBroadcast(Intent("alarm.test"))
                 timeNotificationManager.reservationTimeAlarm(data, this)
+
+
+
+//                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis
+//                    , AlarmManager.INTERVAL_FIFTEEN_MINUTES
+//                    , pendingIntent)
             }
 
 
