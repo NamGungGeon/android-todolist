@@ -1,12 +1,20 @@
 package kr.ac.konkuk.planman
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import kr.ac.konkuk.planman.databinding.ActivityAddTodoBinding
 import kr.ac.konkuk.planman.databinding.AddTodoCategoryboxBinding
 import kr.ac.konkuk.planman.databinding.AddTodoTimepickerBinding
@@ -17,6 +25,9 @@ class AddTodoActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityAddTodoBinding
     lateinit var data: MyData2
+    lateinit var googleMap: GoogleMap
+    private val seoul = LatLng(37.5547, 126.9706)
+    lateinit var pos: LatLng
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,6 +53,7 @@ class AddTodoActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun init() {
         binding.dropDownWebAddress.addTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_find_in_page_24)
         binding.dropDownWebAddress.addTodoCategoryTitle.text = "웹사이트"
@@ -52,7 +64,43 @@ class AddTodoActivity : AppCompatActivity() {
 
         binding.dropDownLocation.addTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_map_24)
         binding.dropDownLocation.addTodoCategoryTitle.text = "장소"
-        initSwap(binding.dropDownLocation, binding.mapView)
+        initSwap(binding.dropDownLocation, binding.map)
+
+        val transImage = binding.transparentImage
+        transImage.setOnTouchListener { _, event ->
+            var action = event.action
+            when(action) {
+                MotionEvent.ACTION_DOWN -> {
+                    binding.root.requestDisallowInterceptTouchEvent(true)
+                    false
+                }
+                MotionEvent.ACTION_UP -> {
+                    binding.root.requestDisallowInterceptTouchEvent(true)
+                    false
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    binding.root.requestDisallowInterceptTouchEvent(true)
+                    false
+                }
+                else -> true
+            }
+        }
+
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.map_frag) as SupportMapFragment
+        mapFragment.getMapAsync { it ->
+            googleMap = it
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(seoul, 11.0f))
+            googleMap.setMinZoomPreference(8.0f)
+            googleMap.setMaxZoomPreference(16.0f)
+            googleMap.setOnMapClickListener {
+                val option = MarkerOptions()
+                option.position(it)
+                option.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)) // 나중에 테마 색으로 바꿀 것
+                googleMap.addMarker(option)
+                pos = it
+            }
+        }
+
 
         binding.textConfirmTime.isVisible = false
         binding.dropDownSetDate.addTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_edit_calendar_24)
@@ -93,7 +141,7 @@ class AddTodoActivity : AppCompatActivity() {
             data.content = binding.editTextTodo.text.toString()
             data.type = "tmp"
             data.attachment.webSite = binding.editTextTextWebAddress.text.toString()
-            data.attachment.location = "tmp"
+            data.attachment.location = "${pos.latitude} ${pos.longitude}"
             data.attachment.phoneNumber = binding.editTextPhoneNumber.text.toString()
             data.notification.notifyRadius = binding.editTextRadius.text.toString()
 
