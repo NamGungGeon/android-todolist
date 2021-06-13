@@ -9,6 +9,7 @@ import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.net.Uri
+import android.os.Bundle
 import android.provider.AlarmClock
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -17,16 +18,13 @@ class TimeAlarmReceiver : BroadcastReceiver() {
     lateinit var mediaPlayer : MediaPlayer
     val id = "TimeChannel"
     val name = "TimeCheckChannel"
+    lateinit var data : MyData
 
     //기기가 다시 시작되면 알람 시작
     override fun onReceive(context: Context?, intent: Intent?) {
-        Log.e("onReceive()", "receiver test")
+        val getBundle = intent!!.getParcelableExtra<Bundle>("timeDataByBundle")
+        data = getBundle!!.getSerializable("bundleData") as MyData
 
-        Log.e("hasData", "${intent!!.hasExtra("timeData")}")
-//        if (intent!!.hasExtra("timeData")) {
-            var data = intent!!.getSerializableExtra("timeData") as MyData
-            Log.e("test", "data get")
-        //}
 
         //NotificationChannel, Builder 설정
         val notificationChannel = NotificationChannel(id, name, NotificationManager.IMPORTANCE_DEFAULT)
@@ -57,7 +55,6 @@ class TimeAlarmReceiver : BroadcastReceiver() {
         val notification = builder.build()
         manager.notify(10, notification)
 
-        //        /*
 //        case 1
 //         */
 //        val notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
