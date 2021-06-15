@@ -56,7 +56,7 @@ class CalendarTodoFragment : Fragment() {
     }
 
     private fun setCalendarMonth(month: YearMonth = YearMonth.now()) {
-        showTodoAsList(ArrayList<MyData>())
+        showTodoAsList(ArrayList<MyData2>())
         binding.apply {
 
             //calendar header
@@ -197,13 +197,13 @@ class CalendarTodoFragment : Fragment() {
         }
     }
 
-    private fun getDayTodoList(time: LocalDate): ArrayList<MyData> {
+    private fun getDayTodoList(time: LocalDate): ArrayList<MyData2> {
         //with dummy data
-        val dayTodoList = ArrayList<MyData>()
+        val dayTodoList = ArrayList<MyData2>()
         val iterCnt = Random().nextInt(5)
         if (iterCnt > 0)
             for (idx in 0..iterCnt) {
-                val myData = MyData()
+                val myData = MyData2()
                 myData.title = "테스트 할일"
                 myData.content = "테스트 할일"
                 dayTodoList.add(myData)
@@ -211,7 +211,7 @@ class CalendarTodoFragment : Fragment() {
         return dayTodoList
     }
 
-    private fun showTodoAsList(dayTodoList: ArrayList<MyData>, date: LocalDate? = null) {
+    private fun showTodoAsList(dayTodoList: ArrayList<MyData2>, date: LocalDate? = null) {
 
 
         val fragment: ListTodoFragment =

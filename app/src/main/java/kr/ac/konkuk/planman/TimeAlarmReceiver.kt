@@ -36,7 +36,7 @@ class TimeAlarmReceiver : BroadcastReceiver() {
         val builder = NotificationCompat.Builder(context!!, id)
             .setSmallIcon(R.drawable.ic_baseline_alarm_24)
             .setContentTitle(data.title)
-            .setContentText("${data.notifyDateTime!!.month}월 ${data.notifyDateTime!!.dayOfMonth}일 ${data.notifyDateTime!!.hour} 시 ${data.notifyDateTime!!.minute} 분 : [${data.type}]-${data.content}")
+//            .setContentText("${data.notifyDateTime!!.month}월 ${data.notifyDateTime!!.dayOfMonth}일 ${data.notifyDateTime!!.hour} 시 ${data.notifyDateTime!!.minute} 분 : [${data.type}]-${data.content}")
             .setAutoCancel(true)
 
 
