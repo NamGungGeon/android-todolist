@@ -27,7 +27,7 @@ class TimeAlarmReceiver : BroadcastReceiver() {
 
 
         //NotificationChannel, Builder 설정
-        val notificationChannel = NotificationChannel(id, name, NotificationManager.IMPORTANCE_DEFAULT)
+        val notificationChannel = NotificationChannel(id, name, android.app.NotificationManager.IMPORTANCE_DEFAULT)
         notificationChannel.enableVibration(true)
         notificationChannel.enableLights(true)
         notificationChannel.lightColor = Color.BLUE
@@ -49,7 +49,7 @@ class TimeAlarmReceiver : BroadcastReceiver() {
         builder.setContentIntent(toMainPendingIntent)
 
         //notification 매니저 설정
-        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
         manager.createNotificationChannel(notificationChannel)
 
         val notification = builder.build()
