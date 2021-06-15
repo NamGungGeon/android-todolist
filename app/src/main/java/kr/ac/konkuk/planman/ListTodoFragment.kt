@@ -12,7 +12,7 @@ import kr.ac.konkuk.planman.databinding.FragmentListTodoBinding
 import java.time.LocalDateTime
 
 class ListTodoFragment : Fragment() {
-    var data: ArrayList<MyData> = ArrayList()
+    var data: ArrayList<MyData2> = ArrayList()
     lateinit var recyclerView: RecyclerView
     private lateinit var binding: FragmentListTodoBinding
 
@@ -34,13 +34,15 @@ class ListTodoFragment : Fragment() {
     }
 
     private fun initData() {
-        data = ArrayList()
-        data.add(MyData("보고서 올리기", "계약 관련 보고서 김과장한테 올려야함", "업무", "noInfo", "noInfo", "noInfo", LocalDateTime.now(), "noInfo"))
-        data.add(MyData("고성호 만나기", "일요일 밤 10시", "약속", "noInfo", "noInfo", "noInfo", LocalDateTime.now(), "noInfo"))
-        data.add(MyData("이마트", "이마트에서 계란 사기", "구매", "noInfo", "noInfo", "noInfo", LocalDateTime.now(), "noInfo"))
+        val db = DB(requireContext())
+        data = db.readMyData()
+//        data = ArrayList()
+//        data.add(MyData("보고서 올리기", "계약 관련 보고서 김과장한테 올려야함", "업무", "noInfo", "noInfo", "noInfo", LocalDateTime.now(), "noInfo"))
+//        data.add(MyData("고성호 만나기", "일요일 밤 10시", "약속", "noInfo", "noInfo", "noInfo", LocalDateTime.now(), "noInfo"))
+//        data.add(MyData("이마트", "이마트에서 계란 사기", "구매", "noInfo", "noInfo", "noInfo", LocalDateTime.now(), "noInfo"))
     }
 
-    fun setCustomData(data: ArrayList<MyData>) {
+    fun setCustomData(data: ArrayList<MyData2>) {
         this.data = data
         initRecyclerView()
     }

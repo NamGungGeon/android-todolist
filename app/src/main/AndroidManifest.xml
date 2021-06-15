@@ -17,9 +17,16 @@
             android:name=".LocationNotificationService"
             android:enabled="true"
             android:exported="true"></service>
-
-        <activity android:name=".CheckTodoActivity" />
-        <activity android:name=".CategoryModifyActivity" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version">
+        </meta-data>
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyC7Vx8BufKEwEAujQXDL2Fy8g9iPawk_3k">
+        </meta-data>
+        <activity android:name=".CheckTodoActivity"/>
+        <activity android:name=".CategoryModifyActivity"></activity>
         <activity android:name=".CategoryAddActivity" />
         <activity android:name=".CategoryListActivity" />
         <activity android:name=".AddTodoActivity" />

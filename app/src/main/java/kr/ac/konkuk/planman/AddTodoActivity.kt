@@ -1,12 +1,20 @@
 package kr.ac.konkuk.planman
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import kr.ac.konkuk.planman.databinding.ActivityAddTodoBinding
 import kr.ac.konkuk.planman.databinding.AddTodoCategoryboxBinding
 import kr.ac.konkuk.planman.databinding.AddTodoTimepickerBinding
@@ -16,7 +24,10 @@ import java.time.format.DateTimeFormatter
 class AddTodoActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityAddTodoBinding
-    lateinit var data: MyData
+    lateinit var data: MyData2
+    lateinit var googleMap: GoogleMap
+    private val seoul = LatLng(37.5547, 126.9706)
+    lateinit var pos: LatLng
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,9 +35,9 @@ class AddTodoActivity : AppCompatActivity() {
         binding = ActivityAddTodoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        data = intent.getSerializableExtra("data") as MyData
+        data = intent.getSerializableExtra("data") as MyData2
         init()
-        if (data.title != null)
+        if (data.id.toInt()  != -1)
             initData()
     }
 
@@ -42,6 +53,7 @@ class AddTodoActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun init() {
         binding.dropDownWebAddress.addTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_find_in_page_24)
         binding.dropDownWebAddress.addTodoCategoryTitle.text = "웹사이트"
@@ -52,7 +64,43 @@ class AddTodoActivity : AppCompatActivity() {
 
         binding.dropDownLocation.addTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_map_24)
         binding.dropDownLocation.addTodoCategoryTitle.text = "장소"
-        initSwap(binding.dropDownLocation, binding.mapView)
+        initSwap(binding.dropDownLocation, binding.map)
+
+        val transImage = binding.transparentImage
+        transImage.setOnTouchListener { _, event ->
+            var action = event.action
+            when(action) {
+                MotionEvent.ACTION_DOWN -> {
+                    binding.root.requestDisallowInterceptTouchEvent(true)
+                    false
+                }
+                MotionEvent.ACTION_UP -> {
+                    binding.root.requestDisallowInterceptTouchEvent(true)
+                    false
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    binding.root.requestDisallowInterceptTouchEvent(true)
+                    false
+                }
+                else -> true
+            }
+        }
+
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.map_frag) as SupportMapFragment
+        mapFragment.getMapAsync { it ->
+            googleMap = it
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(seoul, 11.0f))
+            googleMap.setMinZoomPreference(8.0f)
+            googleMap.setMaxZoomPreference(16.0f)
+            googleMap.setOnMapClickListener {
+                val option = MarkerOptions()
+                option.position(it)
+                option.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)) // 나중에 테마 색으로 바꿀 것
+                googleMap.addMarker(option)
+                pos = it
+            }
+        }
+
 
         binding.textConfirmTime.isVisible = false
         binding.dropDownSetDate.addTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_edit_calendar_24)
@@ -63,15 +111,17 @@ class AddTodoActivity : AppCompatActivity() {
             val dlgBuilder = AlertDialog.Builder(this)
             dlgBuilder.setView(dlgBinding.root).setPositiveButton("확인") {
                 _, _ ->
-                data.notifyDateTime = LocalDateTime.of(
-                    year,
-                    month + 1,
-                    dayOfMonth,
-                    dlgBinding.timePicker.hour,
-                    dlgBinding.timePicker.minute
-                )
+                data.notification.notifyDateTime = "${year}-${month + 1}-${dayOfMonth}" +
+                        "-${dlgBinding.timePicker.hour}-${dlgBinding.timePicker.minute}"
+
+
+                var dateTime = LocalDateTime.of(
+                year,
+                month + 1,
+                dayOfMonth,
+                dlgBinding.timePicker.hour,
+                dlgBinding.timePicker.minute)
                 var dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분")
-                var dateTime = data.notifyDateTime
                 binding.textConfirmTime.text = dateTime!!.format(dateTimeFormatter)
                 binding.textConfirmTime.isVisible = true
             }
@@ -90,13 +140,16 @@ class AddTodoActivity : AppCompatActivity() {
             data.title = binding.editTextTodoTitle.text.toString()
             data.content = binding.editTextTodo.text.toString()
             data.type = "tmp"
-            data.webSite = binding.editTextTextWebAddress.text.toString()
-            data.location = "tmp"
-            data.phoneNumber = binding.editTextPhoneNumber.text.toString()
-            data.notifyRadius = binding.editTextRadius.text.toString()
+            data.attachment.webSite = binding.editTextTextWebAddress.text.toString()
+            data.attachment.location = "${pos.latitude} ${pos.longitude}"
+            data.attachment.phoneNumber = binding.editTextPhoneNumber.text.toString()
+            data.notification.notifyRadius = binding.editTextRadius.text.toString()
+
+            val db = DB(this)
+            db.insertMyData(data)
 
             val intent = Intent(this, MainActivity::class.java)
-            intent.putExtra("data", data) // 나중에 FileIO나 DB로 변경
+//            intent.putExtra("data", data) // 나중에 FileIO나 DB로 변경
             startActivity(intent)
             Toast.makeText(this, "할일이 추가되었습니다", Toast.LENGTH_LONG).show()
         }
@@ -106,7 +159,7 @@ class AddTodoActivity : AppCompatActivity() {
     private fun initData() {
         binding.editTextTodoTitle.setText(data.title)
         binding.editTextTodo.setText(data.content)
-        binding.editTextTextWebAddress.setText(data.webSite)
-        binding.editTextPhoneNumber.setText(data.phoneNumber)
+        binding.editTextTextWebAddress.setText(data.attachment.webSite)
+        binding.editTextPhoneNumber.setText(data.attachment.phoneNumber)
     }
 }

@@ -45,8 +45,6 @@ class LocationNotificationService : Service() {
                         val notificationTargetList = ArrayList<MyData2>()
                         todoList.map { todo ->
                             //calc distance between current location and todolist location
-                            if (todo.attachment == null)
-                                return@map
                             val lat = todo.attachment!!.locationLat
                             val lng = todo.attachment!!.locationLng
                             if (lat != 0.0 && lng != 0.0) {
@@ -68,7 +66,7 @@ class LocationNotificationService : Service() {
                         NotificationManager.getInstance()
                             .sendNotification(
                                 this@LocationNotificationService,
-                                MyData2("test", "test body", null, null, null)
+                                MyData2()
                             )
                     }
                 }

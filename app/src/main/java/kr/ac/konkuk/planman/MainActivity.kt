@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
     private fun initUI() {
         todoListVisualizers.add(ListTodoFragment())
         todoListVisualizers.add(CalendarTodoFragment())
-        todoListVisualizers.add(Fragment())
+        todoListVisualizers.add(MapTodo().mapFragment)
 
         binding.apply {
             todoListPager.adapter = object : FragmentStateAdapter(this@MainActivity) {
@@ -54,8 +54,8 @@ class MainActivity : AppCompatActivity() {
             todoListPager.offscreenPageLimit = todoListVisualizers.size
 
             addTodoBtn.setOnClickListener {
-                val intent = Intent(applicationContext, AddTodoActivity::class.java)
-                intent.putExtra("data", MyData())
+                val intent= Intent(applicationContext, AddTodoActivity::class.java)
+                intent.putExtra("data", MyData2())
                 startActivity(intent)
             }
 

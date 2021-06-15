@@ -10,7 +10,7 @@ data class MyData(
     var webSite: String?,
     var phoneNumber: String?,
     var location: String?,
-    var notifyDateTime: LocalDateTime?,
+    var notifyDateTime: String?,
     var notifyRadius: String?
 ) : Serializable {
     constructor() : this(null, null, null, null, null, null, null, null)
