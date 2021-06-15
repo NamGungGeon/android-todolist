@@ -2,12 +2,14 @@ package kr.ac.konkuk.planman
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -29,16 +31,21 @@ class AddTodoActivity : AppCompatActivity() {
     private val seoul = LatLng(37.5547, 126.9706)
     lateinit var pos: LatLng
 
+    private var selectedCategory: String? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddTodoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        selectedCategory = intent.getStringExtra("category")
+
         data = intent.getSerializableExtra("data") as MyData2
         init()
-        if (data.id.toInt()  != -1)
+        if (data.id.toInt() != -1)
             initData()
+
     }
 
     private fun initSwap(box: AddTodoCategoryboxBinding, content: View) {
@@ -55,6 +62,34 @@ class AddTodoActivity : AppCompatActivity() {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun init() {
+        val categories = ArrayList<String>(arrayListOf("업무", "약속", "구매"))
+        val spinnerAdapter =
+            ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, categories)
+        binding.categorySpinner.adapter = spinnerAdapter
+        binding.categorySpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    selectedCategory = categories[position]
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+//                    TODO("Not yet implemented")
+                }
+            }
+        if (selectedCategory != null) {
+            //find
+            val index = categories.indexOf(selectedCategory)
+            if (index != -1) {
+                binding.categorySpinner.setSelection(0)
+            }
+        }
+
+
         binding.dropDownWebAddress.addTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_find_in_page_24)
         binding.dropDownWebAddress.addTodoCategoryTitle.text = "웹사이트"
         initSwap(binding.dropDownWebAddress, binding.editTextTextWebAddress)
@@ -69,7 +104,7 @@ class AddTodoActivity : AppCompatActivity() {
         val transImage = binding.transparentImage
         transImage.setOnTouchListener { _, event ->
             var action = event.action
-            when(action) {
+            when (action) {
                 MotionEvent.ACTION_DOWN -> {
                     binding.root.requestDisallowInterceptTouchEvent(true)
                     false
@@ -86,7 +121,8 @@ class AddTodoActivity : AppCompatActivity() {
             }
         }
 
-        val mapFragment = supportFragmentManager.findFragmentById(R.id.map_frag) as SupportMapFragment
+        val mapFragment =
+            supportFragmentManager.findFragmentById(R.id.map_frag) as SupportMapFragment
         mapFragment.getMapAsync { it ->
             googleMap = it
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(seoul, 11.0f))
@@ -109,24 +145,23 @@ class AddTodoActivity : AppCompatActivity() {
         binding.calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             val dlgBinding = AddTodoTimepickerBinding.inflate(layoutInflater)
             val dlgBuilder = AlertDialog.Builder(this)
-            dlgBuilder.setView(dlgBinding.root).setPositiveButton("확인") {
-                _, _ ->
+            dlgBuilder.setView(dlgBinding.root).setPositiveButton("확인") { _, _ ->
                 data.notification.notifyDateTime = "${year}-${month + 1}-${dayOfMonth}" +
                         "-${dlgBinding.timePicker.hour}-${dlgBinding.timePicker.minute}"
 
 
                 var dateTime = LocalDateTime.of(
-                year,
-                month + 1,
-                dayOfMonth,
-                dlgBinding.timePicker.hour,
-                dlgBinding.timePicker.minute)
+                    year,
+                    month + 1,
+                    dayOfMonth,
+                    dlgBinding.timePicker.hour,
+                    dlgBinding.timePicker.minute
+                )
                 var dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분")
                 binding.textConfirmTime.text = dateTime!!.format(dateTimeFormatter)
                 binding.textConfirmTime.isVisible = true
             }
-                .setNegativeButton("취소") {
-                        _, _ ->
+                .setNegativeButton("취소") { _, _ ->
                 }
                 .show()
         }
