@@ -89,7 +89,13 @@ class AddTodoActivity : AppCompatActivity() {
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map_frag) as SupportMapFragment
         mapFragment.getMapAsync { it ->
             googleMap = it
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(seoul, 11.0f))
+            if(data.id.toInt() != -1) {
+                val loc = data.attachment.location!!.split(" ")
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(loc[0].toDouble(), loc[1].toDouble()), 11.0f))
+                pos = LatLng(loc[0].toDouble(), loc[1].toDouble())
+            }
+            else
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(seoul, 11.0f))
             googleMap.setMinZoomPreference(8.0f)
             googleMap.setMaxZoomPreference(16.0f)
             googleMap.setOnMapClickListener {
@@ -161,5 +167,7 @@ class AddTodoActivity : AppCompatActivity() {
         binding.editTextTodo.setText(data.content)
         binding.editTextTextWebAddress.setText(data.attachment.webSite)
         binding.editTextPhoneNumber.setText(data.attachment.phoneNumber)
+        val db = DB(this)
+        db.deleteMyData(data)
     }
 }

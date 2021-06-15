@@ -24,6 +24,8 @@ class MainActivity : AppCompatActivity() {
     val CATEGORY_REQUEST_CODE = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
+//        val db = DB(this)
+//        db.resetDB()
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -35,7 +37,7 @@ class MainActivity : AppCompatActivity() {
     private fun initUI() {
         todoListVisualizers.add(ListTodoFragment())
         todoListVisualizers.add(CalendarTodoFragment())
-        todoListVisualizers.add(MapTodo().mapFragment)
+        todoListVisualizers.add(MapTodo(this).mapFragment)
 
         binding.apply {
             todoListPager.adapter = object : FragmentStateAdapter(this@MainActivity) {
