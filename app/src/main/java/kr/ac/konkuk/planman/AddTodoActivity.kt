@@ -69,7 +69,14 @@ class AddTodoActivity : AppCompatActivity() {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun init() {
-        val categories = ArrayList<String>(arrayListOf("업무", "약속", "구매"))
+        val db = DB(this)
+        val categoryDataList = db.readCategory()
+        val categories =  ArrayList<String>()
+        for (i in categoryDataList) {
+            categories.add(i.type.toString())
+        }
+
+        //val categories = ArrayList<String>(arrayListOf("업무", "약속", "구매"))
         val spinnerAdapter =
             ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, categories)
         binding.categorySpinner.adapter = spinnerAdapter
@@ -155,6 +162,8 @@ class AddTodoActivity : AppCompatActivity() {
         binding.dropDownSetDate.addTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_edit_calendar_24)
         binding.dropDownSetDate.addTodoCategoryTitle.text = "날짜/시간"
         initSwap(binding.dropDownSetDate, binding.calendarView)
+
+        var dateTime : LocalDateTime? = null
         binding.calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             val dlgBinding = AddTodoTimepickerBinding.inflate(layoutInflater)
             val dlgBuilder = AlertDialog.Builder(this)
@@ -163,7 +172,7 @@ class AddTodoActivity : AppCompatActivity() {
                         "-${dlgBinding.timePicker.hour}-${dlgBinding.timePicker.minute}"
 
 
-                var dateTime = LocalDateTime.of(
+                dateTime = LocalDateTime.of(
                     year,
                     month + 1,
                     dayOfMonth,
@@ -187,7 +196,7 @@ class AddTodoActivity : AppCompatActivity() {
 
             data.title = binding.editTextTodoTitle.text.toString()
             data.content = binding.editTextTodo.text.toString()
-            data.type = "tmp"
+            data.type = selectedCategory
             data.attachment.webSite = binding.editTextTextWebAddress.text.toString()
             data.attachment.location = "${pos.latitude} ${pos.longitude}"
             data.attachment.phoneNumber = binding.editTextPhoneNumber.text.toString()
@@ -197,23 +206,9 @@ class AddTodoActivity : AppCompatActivity() {
             db.insertMyData(data)
 
             //시간 예약
-//            val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
-//
-//            val tIntent = Intent(this, TimeAlarmReceiver::class.java)
-//            val calendar = Calendar.getInstance()
-//
-//            val pendingIntent = PendingIntent.getBroadcast(this, 0, tIntent, 0)
-
             timeNotificationManager = TimeAlarmManager()
-            if (data.notification.notifyDateTime != null) {
-                //sendBroadcast(Intent("alarm.test"))
-//                timeNotificationManager.reservationTimeAlarm(data, this)
-
-
-
-//                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis
-//                    , AlarmManager.INTERVAL_FIFTEEN_MINUTES
-//                    , pendingIntent)
+            if (dateTime != null) {
+                timeNotificationManager.reservationTimeAlarm(data, dateTime,this)
             }
 
 
