@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
             todoListPager.offscreenPageLimit = todoListVisualizers.size
 
             addTodoBtn.setOnClickListener {
-                val intent= Intent(applicationContext, AddTodoActivity::class.java)
+                val intent = Intent(applicationContext, AddTodoActivity::class.java)
                 intent.putExtra("data", MyData2())
                 startActivity(intent)
             }
@@ -106,11 +106,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initCategories(categories: ArrayList<String>) {
+        binding.categoryAddBtn.setOnClickListener {
+            val intent= Intent(this@MainActivity, CategoryAddActivity::class.java)
+            startActivity(intent)
+        }
         binding.navView.menu.apply {
             clear()
             categories.map {
                 val categoryName = it
-                val addIcon = layoutInflater.inflate(R.layout.category_add, null, false)
+                val addIcon = layoutInflater.inflate(R.layout.layout_category_add, null, false)
                 addIcon.setOnClickListener {
                     //add
                     val intent = Intent(applicationContext, AddTodoActivity::class.java)
@@ -163,7 +167,8 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        initCategories(arrayListOf<String>("업무", "약속", "일정", "구매"))
+//        initCategories(arrayListOf("업무", "구매", "약속"))
+        initCategories(ArrayList(DB(this).readCategory().map { it.type }.toList()))
     }
 
     override fun onBackPressed() {
