@@ -272,6 +272,7 @@ class CalendarTodoFragment : Fragment() {
         allAboutMonth: Boolean = false
     ) {
         binding.selectedDayTodoCntText.setText("할 일이 ${todoList.size}개 있습니다")
+
         val fragment: ListTodoFragment =
             childFragmentManager.findFragmentById(R.id.list_todo_fragment) as ListTodoFragment
         fragment.setCustomData(todoList)

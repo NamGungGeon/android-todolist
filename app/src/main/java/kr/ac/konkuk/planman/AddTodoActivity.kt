@@ -1,14 +1,10 @@
 package kr.ac.konkuk.planman
 
 import android.annotation.SuppressLint
-import android.app.AlarmManager
-import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
-import android.view.MotionEvent
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -35,10 +31,12 @@ class AddTodoActivity : AppCompatActivity() {
     lateinit var data: MyData2
     lateinit var googleMap: GoogleMap
     private val seoul = LatLng(37.5547, 126.9706)
-    lateinit var pos: LatLng
+    private var pos: LatLng? = null
 
     lateinit var timeNotificationManager: TimeAlarmManager
-    private var selectedCategory: String? = null
+    private var selectedType: String? = null
+
+    private lateinit var db: DB
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,9 +44,10 @@ class AddTodoActivity : AppCompatActivity() {
         binding = ActivityAddTodoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        selectedCategory = intent.getStringExtra("category")
+        selectedType = intent.getStringExtra("category")
 
         data = intent.getSerializableExtra("data") as MyData2
+        db= DB(this)
         init()
         if (data.id.toInt() != -1)
             initData()
@@ -69,32 +68,40 @@ class AddTodoActivity : AppCompatActivity() {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun init() {
-        val categories = ArrayList<String>(arrayListOf("업무", "약속", "구매"))
-        val spinnerAdapter =
-            ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, categories)
-        binding.categorySpinner.adapter = spinnerAdapter
-        binding.categorySpinner.onItemSelectedListener =
-            object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    selectedCategory = categories[position]
-                }
+        val types = db.readCategory().map{
+            it.type
+        }.toList()
 
-                override fun onNothingSelected(parent: AdapterView<*>?) {
+        if(types.isEmpty()){
+            binding.typeSpinner.visibility= View.GONE
+        }else{
+            val spinnerAdapter =
+                ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, types)
+            binding.typeSpinner.adapter = spinnerAdapter
+            binding.typeSpinner.onItemSelectedListener =
+                object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(
+                        parent: AdapterView<*>?,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+                        selectedType = types[position]
+                    }
+
+                    override fun onNothingSelected(parent: AdapterView<*>?) {
 //                    TODO("Not yet implemented")
+                    }
                 }
-            }
-        if (selectedCategory != null) {
-            //find
-            val index = categories.indexOf(selectedCategory)
-            if (index != -1) {
-                binding.categorySpinner.setSelection(0)
+            if (selectedType != null) {
+                //find
+                val index = types.indexOf(selectedType)
+                if (index != -1) {
+                    binding.typeSpinner.setSelection(0)
+                }
             }
         }
+
 
 
         binding.dropDownWebAddress.addTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_find_in_page_24)
@@ -132,12 +139,18 @@ class AddTodoActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.map_frag) as SupportMapFragment
         mapFragment.getMapAsync { it ->
             googleMap = it
-            if(data.id.toInt() != -1) {
+            if (data.id.toInt() != -1) {
                 val loc = data.attachment.location!!.split(" ")
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(loc[0].toDouble(), loc[1].toDouble()), 11.0f))
+                googleMap.animateCamera(
+                    CameraUpdateFactory.newLatLngZoom(
+                        LatLng(
+                            loc[0].toDouble(),
+                            loc[1].toDouble()
+                        ), 11.0f
+                    )
+                )
                 pos = LatLng(loc[0].toDouble(), loc[1].toDouble())
-            }
-            else
+            } else
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(seoul, 11.0f))
             googleMap.setMinZoomPreference(8.0f)
             googleMap.setMaxZoomPreference(16.0f)
@@ -161,7 +174,7 @@ class AddTodoActivity : AppCompatActivity() {
             dlgBuilder.setView(dlgBinding.root).setPositiveButton("확인") { _, _ ->
                 data.notification.notifyDateTime = "${year}-${month + 1}-${dayOfMonth}" +
                         "-${dlgBinding.timePicker.hour}-${dlgBinding.timePicker.minute}"
-
+                Log.i("dateTimeFormat", data.notification.notifyDateTime!!)
 
                 var dateTime = LocalDateTime.of(
                     year,
@@ -187,9 +200,10 @@ class AddTodoActivity : AppCompatActivity() {
 
             data.title = binding.editTextTodoTitle.text.toString()
             data.content = binding.editTextTodo.text.toString()
-            data.type = "tmp"
+            data.type = selectedType
             data.attachment.webSite = binding.editTextTextWebAddress.text.toString()
-            data.attachment.location = "${pos.latitude} ${pos.longitude}"
+            if (pos != null)
+                data.attachment.location = "${pos!!.latitude} ${pos!!.longitude}"
             data.attachment.phoneNumber = binding.editTextPhoneNumber.text.toString()
             data.notification.notifyRadius = binding.editTextRadius.text.toString()
 
@@ -208,7 +222,6 @@ class AddTodoActivity : AppCompatActivity() {
             if (data.notification.notifyDateTime != null) {
                 //sendBroadcast(Intent("alarm.test"))
 //                timeNotificationManager.reservationTimeAlarm(data, this)
-
 
 
 //                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis
