@@ -42,6 +42,7 @@ class CalendarTodoFragment : Fragment() {
     lateinit var todoList: ArrayList<MyData2>
     private var currentCalendarLocalDate: LocalDate = LocalDate.now()
     private var categoryList: ArrayList<CategoryData> = ArrayList()
+    private var selectedLocalDate: LocalDate? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -148,6 +149,8 @@ class CalendarTodoFragment : Fragment() {
                             val onDaySelected = fun() {
                                 //show selected day's todoList
                                 showTodoAsList(dayTodoList, day.date)
+                                selectedLocalDate = day.date
+                                calendarView.notifyCalendarChanged()
                             }
                             dayTodoList.map { todo ->
                                 when {
@@ -221,8 +224,13 @@ class CalendarTodoFragment : Fragment() {
                         layout.background =
                             resources.getDrawable(R.drawable.calendar_today_background)
                     } else {
-                        layout.background =
-                            resources.getDrawable(R.drawable.calendar_day_background)
+                        if (selectedLocalDate != null && day.date.isEqual(selectedLocalDate)) {
+                            layout.background =
+                                resources.getDrawable(R.drawable.calendar_select_background)
+                        } else {
+                            layout.background =
+                                resources.getDrawable(R.drawable.calendar_day_background)
+                        }
                     }
                     if (day.owner == DayOwner.THIS_MONTH) {
                         dayText.setTextColorRes(R.color.black)
