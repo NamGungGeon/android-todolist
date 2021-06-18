@@ -26,6 +26,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 //        val db = DB(this)
 //        db.resetDB()
+//
+//        val db2 = DB(this)
+//        db2.insertCategory(CategoryData("업무", "보통", "파랑", "보통"))
+//        db2.insertCategory(CategoryData("구매", "보통", "노랑", "보통"))
+//        db2.insertCategory(CategoryData("약속", "보통", "빨강", "보통"))
+
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -60,12 +66,6 @@ class MainActivity : AppCompatActivity() {
                 intent.putExtra("data", MyData2())
                 startActivity(intent)
             }
-
-//            //임시 : 실제로는 SettingActivity 나오게끔 바꿀것
-//            settingImg.setOnClickListener {
-//                val intent = Intent(applicationContext, CategoryListActivity::class.java)
-//                startActivityForResult(intent, CATEGORY_REQUEST_CODE)
-//            }
         }
     }
 
