@@ -168,6 +168,8 @@ class AddTodoActivity : AppCompatActivity() {
         binding.dropDownSetDate.addTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_edit_calendar_24)
         binding.dropDownSetDate.addTodoCategoryTitle.text = "날짜/시간"
         initSwap(binding.dropDownSetDate, binding.calendarView)
+
+        var dateTime : LocalDateTime? = null
         binding.calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             val dlgBinding = AddTodoTimepickerBinding.inflate(layoutInflater)
             val dlgBuilder = AlertDialog.Builder(this)
@@ -211,13 +213,6 @@ class AddTodoActivity : AppCompatActivity() {
             db.insertMyData(data)
 
             //시간 예약
-//            val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
-//
-//            val tIntent = Intent(this, TimeAlarmReceiver::class.java)
-//            val calendar = Calendar.getInstance()
-//
-//            val pendingIntent = PendingIntent.getBroadcast(this, 0, tIntent, 0)
-
             timeNotificationManager = TimeAlarmManager()
             if (data.notification.notifyDateTime != null) {
                 //sendBroadcast(Intent("alarm.test"))

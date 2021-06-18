@@ -28,6 +28,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 //        val db = DB(this)
 //        db.resetDB()
+//
+//        val db2 = DB(this)
+//        db2.insertCategory(CategoryData("업무", "보통", "파랑", "보통"))
+//        db2.insertCategory(CategoryData("구매", "보통", "노랑", "보통"))
+//        db2.insertCategory(CategoryData("약속", "보통", "빨강", "보통"))
+
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -202,7 +208,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
 
 //        initCategories(arrayListOf("업무", "구매", "약속"))
-        initCategories(ArrayList(DB(this).readCategory().map { it.type }.toList()))
+        initCategories(ArrayList(DB(this).readCategory().map { if(it.type==null) "" else it.type!! }.toList().filter { it != "" }))
     }
 
     override fun onBackPressed() {

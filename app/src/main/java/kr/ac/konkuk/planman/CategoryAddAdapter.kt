@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 class CategoryAddAdapter(val items:ArrayList<CategoryData>) : RecyclerView.Adapter<CategoryAddAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val typeText : TextView = itemView.findViewById(R.id.todoListText)
+        val typeText : TextView = itemView.findViewById(R.id.todoListTextRow)
     }
 
     override fun onCreateViewHolder(

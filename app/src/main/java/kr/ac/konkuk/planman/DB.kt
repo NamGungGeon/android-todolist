@@ -62,20 +62,20 @@ class DB(val context: Context) {
     fun insertCategory(category: CategoryData) {
         val db = dbHelper.writableDatabase
         val cv:ContentValues = category.getContentValues()
-        db.insert("category", null, cv)
+        category.id = db.insert("category", null, cv)
         db.close()
     }
 
     fun updateCategory(category: CategoryData) {
         val db = dbHelper.writableDatabase
         val cv:ContentValues = category.getContentValues()
-        db.update("category", cv, "type=?", arrayOf(category.type))
+        db.update("category", cv, "id=?", arrayOf(category.id.toString()))
         db.close()
     }
 
     fun deleteCategory(category: CategoryData) {
         val db = dbHelper.writableDatabase
-        db.delete("category", "type=?", arrayOf(category.type))
+        db.delete("category", "id=?", arrayOf(category.id.toString()))
         db.close()
     }
 
@@ -85,12 +85,12 @@ class DB(val context: Context) {
         val categoryList: ArrayList<CategoryData> = ArrayList()
         if(cursor.moveToFirst()) {
             do {
-                val category = CategoryData(
-                    cursor.getString(cursor.getColumnIndex("type")),
-                    cursor.getString(cursor.getColumnIndex("textSize")),
-                    cursor.getString(cursor.getColumnIndex("textColor")),
-                    cursor.getString(cursor.getColumnIndex("textStyle"))
-                )
+                val category = CategoryData()
+                category.id = cursor.getLong(cursor.getColumnIndex("id"))
+                category.type = cursor.getString(cursor.getColumnIndex("type"))
+                category.textSize = cursor.getString(cursor.getColumnIndex("textSize"))
+                category.textColor = cursor.getString(cursor.getColumnIndex("textColor"))
+                category.textStyle = cursor.getString(cursor.getColumnIndex("textStyle"))
                 categoryList.add(category)
             } while (cursor.moveToNext())
         }

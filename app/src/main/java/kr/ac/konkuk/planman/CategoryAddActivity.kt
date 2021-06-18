@@ -29,6 +29,7 @@ class CategoryAddActivity : AppCompatActivity() {
 
     lateinit var categoryName : String
 
+    val db = DB(this)
     var data: ArrayList<CategoryData> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,8 +40,6 @@ class CategoryAddActivity : AppCompatActivity() {
         initSpinner()
         initPreview()
         createCategory()
-
-
     }
 
     private fun initSpinner() {
@@ -139,6 +138,9 @@ class CategoryAddActivity : AppCompatActivity() {
 
     private fun createCategory() {
         binding!!.categoryAddTodoBtnAdd.setOnClickListener {
+            //DB insert category data
+            db.insertCategory(CategoryData(categoryName, inputTextSize, inputTextColor, inputTextStyle))
+
             val intent = Intent()
             intent.putExtra("addCategoryData", CategoryData(categoryName, inputTextSize, inputTextColor, inputTextStyle))
             setResult(Activity.RESULT_OK, intent)
