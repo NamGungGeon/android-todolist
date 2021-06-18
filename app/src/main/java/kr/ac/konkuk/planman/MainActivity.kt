@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity() {
                 addIcon.setOnClickListener {
                     //add
                     val intent = Intent(applicationContext, AddTodoActivity::class.java)
-                    intent.putExtra("category", categoryName)
+                    intent.putExtra("type", categoryName)
                     startActivity(intent)
                 }
 
