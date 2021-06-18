@@ -25,7 +25,8 @@ class DBHelper(val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, 
 
         val createCategory =
             "CREATE TABLE IF NOT EXISTS category (" +
-                    "type TEXT PRIMARY KEY," +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "type TEXT," +
                     "textSize TEXT," +
                     "textColor TEXT," +
                     "textStyle TEXT);"
