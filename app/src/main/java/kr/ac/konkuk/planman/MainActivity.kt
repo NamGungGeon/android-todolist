@@ -17,13 +17,13 @@ import kr.ac.konkuk.planman.databinding.ActivityMainBinding
 
 
 class MainActivity : AppCompatActivity() {
+
     lateinit var binding: ActivityMainBinding
     val todoListVisualizers: ArrayList<Fragment> = ArrayList()
     lateinit var drawerToggle: ActionBarDrawerToggle
-    var selectedCategory: String? = null
 
-    //임시 변수
-    val CATEGORY_REQUEST_CODE = 100
+    //use viewModel holding selectedCategory
+    var selectedCategory: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
 //        val db = DB(this)
@@ -32,7 +32,8 @@ class MainActivity : AppCompatActivity() {
 //        val db2 = DB(this)
 //        db2.insertCategory(CategoryData("업무", "보통", "파랑", "보통"))
 //        db2.insertCategory(CategoryData("구매", "보통", "노랑", "보통"))
-//        db2.insertCategory(CategoryData("약속", "보통", "빨강", "보통"))
+//        db2.insertCategory(
+//        CategoryData("약속", "보통", "빨강", "보통"))
 
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -61,7 +62,7 @@ class MainActivity : AppCompatActivity() {
                     return todoListVisualizers[position]
                 }
             }
-            todoListPager.registerOnPageChangeCallback(object:ViewPager2.OnPageChangeCallback(){
+            todoListPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     onViewModeChanged(position)
@@ -100,6 +101,14 @@ class MainActivity : AppCompatActivity() {
     private fun propagateUpdateCategory(selectedCategory: String) {
         //propagate to all fragments in viewPager
         this.selectedCategory = selectedCategory
+        if (selectedCategory == "전체") {
+            this.selectedCategory = null
+            supportActionBar?.title = "전체 할 일"
+            Toast.makeText(this, "전체 할 일을 표시합니다", Toast.LENGTH_SHORT).show()
+        } else {
+            supportActionBar?.title = selectedCategory
+            Toast.makeText(this, "${selectedCategory} 카테고리의 할 일을 표시합니다", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun initActionBar() {
@@ -129,44 +138,52 @@ class MainActivity : AppCompatActivity() {
             supportActionBar?.apply {
                 setDisplayHomeAsUpEnabled(true)
                 setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24)
+                title = "전체 할 일"
             }
         }
     }
 
     private fun initCategories(categories: ArrayList<String>) {
         binding.categoryAddBtn.setOnClickListener {
-            val intent= Intent(this@MainActivity, CategoryAddActivity::class.java)
+            val intent = Intent(this@MainActivity, CategoryAddActivity::class.java)
             startActivity(intent)
         }
         binding.navView.menu.apply {
             clear()
-            categories.map {
+            val realCategories = ArrayList(categories)
+            realCategories.add(0, "전체")
+            realCategories.map {
                 val categoryName = it
                 val addIcon = layoutInflater.inflate(R.layout.layout_category_add, null, false)
                 addIcon.setOnClickListener {
                     //add
                     val intent = Intent(applicationContext, AddTodoActivity::class.java)
+                    intent.putExtra("data", MyData2())
                     intent.putExtra("type", categoryName)
                     startActivity(intent)
                 }
-
-                add(it).setActionView(addIcon).setOnMenuItemClickListener {
+                add(it).setOnMenuItemClickListener {
                     //show only todoLists about selected category
                     propagateUpdateCategory(categoryName)
+                    binding.drawerLayout.close()
                     false
+                }.apply {
+                    if (it != "전체")
+                        this.actionView = addIcon
                 }
             }
         }
     }
-    private fun onViewModeChanged(position:Int){
-        binding.apply{
+
+    private fun onViewModeChanged(position: Int) {
+        binding.apply {
             listViewMode.setColorFilter(resources.getColor(R.color.light_gray))
             calendarViewMode.setColorFilter(resources.getColor(R.color.light_gray))
             mapViewMode.setColorFilter(resources.getColor(R.color.light_gray))
-            when(position){
-                0-> listViewMode.setColorFilter(resources.getColor(R.color.black))
-                1-> calendarViewMode.setColorFilter(resources.getColor(R.color.black))
-                2-> mapViewMode.setColorFilter(resources.getColor(R.color.black))
+            when (position) {
+                0 -> listViewMode.setColorFilter(resources.getColor(R.color.black))
+                1 -> calendarViewMode.setColorFilter(resources.getColor(R.color.black))
+                2 -> mapViewMode.setColorFilter(resources.getColor(R.color.black))
             }
         }
     }
@@ -208,7 +225,11 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
 
 //        initCategories(arrayListOf("업무", "구매", "약속"))
-        initCategories(ArrayList(DB(this).readCategory().map { if(it.type==null) "" else it.type!! }.toList().filter { it != "" }))
+        initCategories(
+            ArrayList(
+                DB(this).readCategory().map { if (it.type == null) "" else it.type!! }.toList()
+                    .filter { it != "" })
+        )
     }
 
     override fun onBackPressed() {

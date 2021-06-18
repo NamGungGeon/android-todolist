@@ -44,6 +44,7 @@ class AddTodoActivity : AppCompatActivity() {
         binding = ActivityAddTodoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
         selectedType = intent.getStringExtra("category")
 
         data = intent.getSerializableExtra("data") as MyData2
