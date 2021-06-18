@@ -2,13 +2,12 @@ package kr.ac.konkuk.planman
 
 import android.os.Bundle
 import android.util.TypedValue
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -25,6 +24,7 @@ import kr.ac.konkuk.planman.databinding.CalendarHeaderLayoutBinding
 import kr.ac.konkuk.planman.databinding.FragmentCalendarTodoBinding
 import java.time.LocalDate
 import java.time.YearMonth
+import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.time.temporal.WeekFields
 import java.util.*
@@ -37,7 +37,11 @@ class CalendarTodoFragment : Fragment() {
 
 
     val daysOfWeek = daysOfWeekFromLocale()
-    val MAX_COUNT_TODO_PER_DAY= 2
+    val MAX_COUNT_TODO_PER_DAY = 2
+
+    lateinit var todoList: ArrayList<MyData2>
+    private var currentCalendarLocalDate: LocalDate = LocalDate.now()
+    private var categoryList: ArrayList<CategoryData> = ArrayList()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,12 +55,15 @@ class CalendarTodoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding = FragmentCalendarTodoBinding.bind(view)
-        initCalendar()
 
+        todoList = DB(requireContext()).readMyData()
+        categoryList = DB(requireContext()).readCategory()
+        initCalendar()
     }
 
     private fun setCalendarMonth(month: YearMonth = YearMonth.now()) {
-        showTodoAsList(ArrayList<MyData2>())
+        showTodoAsList(getMonthTodoList(currentCalendarLocalDate), currentCalendarLocalDate, true)
+
         binding.apply {
 
             //calendar header
@@ -92,9 +99,21 @@ class CalendarTodoFragment : Fragment() {
 
             prevMonthBtn.setOnClickListener {
                 setCalendarMonth(month.minusMonths(1))
+                currentCalendarLocalDate = currentCalendarLocalDate.minusMonths(1)
+                showTodoAsList(
+                    getMonthTodoList(currentCalendarLocalDate),
+                    currentCalendarLocalDate,
+                    true
+                )
             }
             nextMonthBtn.setOnClickListener {
                 setCalendarMonth(month.plusMonths(1))
+                currentCalendarLocalDate = currentCalendarLocalDate.plusMonths(1)
+                showTodoAsList(
+                    getMonthTodoList(currentCalendarLocalDate),
+                    currentCalendarLocalDate,
+                    true
+                )
             }
         }
     }
@@ -136,7 +155,7 @@ class CalendarTodoFragment : Fragment() {
                                         dayTodoItems.append(todo.title!!, onDaySelected) { holder ->
                                             holder.labelView.apply {
                                                 setLines(1)
-                                                textSize= 6f
+                                                textSize = 6f
                                                 setTextColor(resources.getColor(R.color.white))
                                                 (this.layoutParams as LinearLayout.LayoutParams).setMargins(
                                                     0,
@@ -144,7 +163,27 @@ class CalendarTodoFragment : Fragment() {
                                                     0,
                                                     4
                                                 )
-                                                setBackgroundColor(resources.getColor(R.color.red_800))
+                                                if (todo.type != null) {
+                                                    val category = useCateogry(todo.type!!)
+                                                    if (category != null) {
+                                                        setBackgroundColor(
+                                                            resources.getColor(
+                                                                when (category.textColor) {
+                                                                    "검정" -> R.color.black
+                                                                    "빨강" -> R.color.red_800
+                                                                    "노랑" -> R.color.list_yellow
+                                                                    "파랑" -> R.color.blue_800
+                                                                    else -> R.color.black
+                                                                },
+                                                                null
+                                                            )
+                                                        )
+                                                    } else {
+                                                        setBackgroundColor(resources.getColor(R.color.black))
+                                                    }
+                                                } else {
+                                                    setBackgroundColor(resources.getColor(R.color.black))
+                                                }
                                             }
                                         }
                                     }
@@ -154,8 +193,8 @@ class CalendarTodoFragment : Fragment() {
                                             onDaySelected
                                         ) { holder ->
                                             holder.labelView.apply {
-                                                textSize= 8f
-                                                textAlignment= TextView.TEXT_ALIGNMENT_TEXT_END
+                                                textSize = 8f
+                                                textAlignment = TextView.TEXT_ALIGNMENT_TEXT_END
                                                 (layoutParams as LinearLayout.LayoutParams).setMargins(
                                                     0,
                                                     0,
@@ -197,38 +236,65 @@ class CalendarTodoFragment : Fragment() {
         }
     }
 
+    private fun useCateogry(type: String): CategoryData? {
+        return categoryList.find {
+            it.type == type
+        }
+    }
+
     private fun getDayTodoList(time: LocalDate): ArrayList<MyData2> {
-        //with dummy data
         val dayTodoList = ArrayList<MyData2>()
-        val iterCnt = Random().nextInt(5)
-        if (iterCnt > 0)
-            for (idx in 0..iterCnt) {
-                val myData = MyData2()
-                myData.title = "테스트 할일"
-                myData.content = "테스트 할일"
-                dayTodoList.add(myData)
-            }
+        todoList.map { todo ->
+            val notifyDateTime = todo.notification.notifyDateTime ?: return@map
+            val todoLocalDate =
+                LocalDate.parse(notifyDateTime, DateTimeFormatter.ofPattern("yyyy-M-d-H-m"))
+            if (todoLocalDate.year == time.year && todoLocalDate.month == time.month && todoLocalDate.dayOfMonth == time.dayOfMonth)
+                dayTodoList.add(todo)
+        }
         return dayTodoList
     }
 
-    private fun showTodoAsList(dayTodoList: ArrayList<MyData2>, date: LocalDate? = null) {
+    private fun getMonthTodoList(time: LocalDate): ArrayList<MyData2> {
+        val dayTodoList = ArrayList<MyData2>()
+        todoList.map { todo ->
+            val notifyDateTime = todo.notification.notifyDateTime ?: return@map
+            val todoLocalDate =
+                LocalDate.parse(notifyDateTime, DateTimeFormatter.ofPattern("yyyy-M-d-H-m"))
+            if (todoLocalDate.year == time.year && todoLocalDate.month == time.month)
+                dayTodoList.add(todo)
+        }
+        return dayTodoList
+    }
 
-
+    private fun showTodoAsList(
+        todoList: ArrayList<MyData2>,
+        date: LocalDate,
+        allAboutMonth: Boolean = false
+    ) {
+        binding.selectedDayTodoCntText.setText("할 일이 ${todoList.size}개 있습니다")
         val fragment: ListTodoFragment =
             childFragmentManager.findFragmentById(R.id.list_todo_fragment) as ListTodoFragment
-        fragment.setCustomData(dayTodoList)
+        fragment.setCustomData(todoList)
         fragment.view?.post {
-            if (date != null) {
+            if (!allAboutMonth) {
                 binding.selectedDayText.text =
                     "${date.year}년 ${date.monthValue}월 ${date.dayOfMonth}일의 할 일"
-                binding.selectedDayText.visibility = View.VISIBLE
                 binding.calendarLayoutScrollView.fullScroll(View.FOCUS_DOWN)
-            }else{
-                binding.selectedDayText.visibility = View.GONE
+            } else {
+                binding.selectedDayText.text =
+                    "${date.year}년 ${date.monthValue}월의 할 일"
+                binding.selectedDayText.visibility = View.VISIBLE
                 binding.calendarLayoutScrollView.fullScroll(View.FOCUS_UP)
             }
-
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        todoList = DB(requireContext()).readMyData()
+        initCalendar()
+        binding.calendarLayoutScrollView.fullScroll(View.FOCUS_UP)
     }
 }
 

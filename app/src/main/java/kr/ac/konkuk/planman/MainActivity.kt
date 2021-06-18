@@ -2,6 +2,7 @@ package kr.ac.konkuk.planman
 
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.ColorFilter
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.view.Menu
@@ -11,6 +12,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import kr.ac.konkuk.planman.databinding.ActivityMainBinding
 
 
@@ -53,12 +55,32 @@ class MainActivity : AppCompatActivity() {
                     return todoListVisualizers[position]
                 }
             }
+            todoListPager.registerOnPageChangeCallback(object:ViewPager2.OnPageChangeCallback(){
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    onViewModeChanged(position)
+                }
+            })
             todoListPager.offscreenPageLimit = todoListVisualizers.size
 
             addTodoBtn.setOnClickListener {
-                val intent= Intent(applicationContext, AddTodoActivity::class.java)
+                val intent = Intent(applicationContext, AddTodoActivity::class.java)
                 intent.putExtra("data", MyData2())
                 startActivity(intent)
+            }
+
+
+
+            binding.apply {
+                listViewMode.setOnClickListener {
+                    todoListPager.setCurrentItem(0, true)
+                }
+                calendarViewMode.setOnClickListener {
+                    todoListPager.setCurrentItem(1, true)
+                }
+                mapViewMode.setOnClickListener {
+                    todoListPager.setCurrentItem(2, true)
+                }
             }
 
 //            //임시 : 실제로는 SettingActivity 나오게끔 바꿀것
@@ -106,15 +128,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initCategories(categories: ArrayList<String>) {
+        binding.categoryAddBtn.setOnClickListener {
+            val intent= Intent(this@MainActivity, CategoryAddActivity::class.java)
+            startActivity(intent)
+        }
         binding.navView.menu.apply {
             clear()
             categories.map {
                 val categoryName = it
-                val addIcon = layoutInflater.inflate(R.layout.category_add, null, false)
+                val addIcon = layoutInflater.inflate(R.layout.layout_category_add, null, false)
                 addIcon.setOnClickListener {
                     //add
                     val intent = Intent(applicationContext, AddTodoActivity::class.java)
-                    intent.putExtra("category", categoryName)
+                    intent.putExtra("type", categoryName)
                     startActivity(intent)
                 }
 
@@ -123,6 +149,18 @@ class MainActivity : AppCompatActivity() {
                     propagateUpdateCategory(categoryName)
                     false
                 }
+            }
+        }
+    }
+    private fun onViewModeChanged(position:Int){
+        binding.apply{
+            listViewMode.setColorFilter(resources.getColor(R.color.light_gray))
+            calendarViewMode.setColorFilter(resources.getColor(R.color.light_gray))
+            mapViewMode.setColorFilter(resources.getColor(R.color.light_gray))
+            when(position){
+                0-> listViewMode.setColorFilter(resources.getColor(R.color.black))
+                1-> calendarViewMode.setColorFilter(resources.getColor(R.color.black))
+                2-> mapViewMode.setColorFilter(resources.getColor(R.color.black))
             }
         }
     }
@@ -163,7 +201,8 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        initCategories(arrayListOf<String>("업무", "약속", "일정", "구매"))
+//        initCategories(arrayListOf("업무", "구매", "약속"))
+        initCategories(ArrayList(DB(this).readCategory().map { it.type }.toList()))
     }
 
     override fun onBackPressed() {
