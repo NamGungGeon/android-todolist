@@ -9,6 +9,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
+import java.time.LocalDateTime
 import java.util.*
 
 class TimeAlarmManager {
@@ -31,17 +32,15 @@ class TimeAlarmManager {
         return nowByCalendar
     }
 
-    fun reservationTimeAlarm(data : MyData2, context: Context) {
-//        timeData = MyData(data.title, data.content, data.type, data.webSite, data.phoneNumber, data.location, data.notifyDateTime, data.notifyRadius)
-        timeData= MyData2()
-//        Log.e("reservationAlarm()", "test")
-//        //data 에서 가져온 시간 설정
-//        calendar.set(Calendar.YEAR, data.notifyDateTime!!.year)
-//        calendar.set(Calendar.MONTH, data.notifyDateTime!!.monthValue)
-//        calendar.set(Calendar.DAY_OF_MONTH, data.notifyDateTime!!.dayOfMonth)
-//        calendar.set(Calendar.HOUR_OF_DAY, data.notifyDateTime!!.hour)
-//        calendar.set(Calendar.MINUTE, data.notifyDateTime!!.minute)
-//        calendar.set(Calendar.SECOND, 0)
+    fun reservationTimeAlarm(data : MyData2, dateTime : LocalDateTime?, context: Context) {
+        timeData= data
+
+        calendar.set(Calendar.YEAR, dateTime!!.year)
+        calendar.set(Calendar.MONTH, dateTime!!.monthValue)
+        calendar.set(Calendar.DAY_OF_MONTH, dateTime!!.dayOfMonth)
+        calendar.set(Calendar.HOUR_OF_DAY, dateTime!!.hour)
+        calendar.set(Calendar.MINUTE, dateTime!!.minute)
+        calendar.set(Calendar.SECOND, 0)
 
         //현재일보다 이전이면 등록 실패
 //        if (calendar.before(Calendar.getInstance())) {
@@ -58,10 +57,6 @@ class TimeAlarmManager {
 
         //알람 설정
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-//        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
-//            calendar.timeInMillis + delay,
-//            AlarmManager.INTERVAL_FIFTEEN_MINUTES,
-//            pendingIntent)
         alarmManager.set(AlarmManager.RTC, calendar.timeInMillis - calendar2.timeInMillis, pendingIntent)
 
     }
