@@ -22,6 +22,8 @@ class MapTodo(context: Context) {
         val db = DB(context)
         data = db.readMyData()
 
+        val category:ArrayList<CategoryData> = db.readCategory()
+
         mapFragment.getMapAsync { it ->
             googleMap = it
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(seoul, 11.0f))
@@ -34,18 +36,29 @@ class MapTodo(context: Context) {
                 true
             }
             for(d in data) {
-                if(d.attachment.location != null) {
+                if(d.attachment.location!= null && d.attachment.location != "") {
                     val option = MarkerOptions()
                     val loc = d.attachment.location!!.split(" ")
+                    val index = category.indexOfFirst {
+                        it.type == d.type
+                    }
+                    val color = category[index].textColor
+                    var markerColor = BitmapDescriptorFactory.HUE_CYAN
+                    if (color == "파랑")
+                        markerColor = BitmapDescriptorFactory.HUE_BLUE
+                    else if (color == "노랑")
+                        markerColor = BitmapDescriptorFactory.HUE_YELLOW
+                    else if (color == "빨강")
+                        markerColor = BitmapDescriptorFactory.HUE_RED
+
                     option.position(LatLng(loc[0].toDouble(), loc[1].toDouble()))
-                    option.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)) //나중에 테마 색으로 바꿀 것
+                    option.icon(BitmapDescriptorFactory.defaultMarker(markerColor)) //나중에 테마 색으로 바꿀 것
                     option.title(d.title)
                     val marker = googleMap.addMarker(option)
-                    marker.showInfoWindow()
+                    //marker.showInfoWindow()
                     marker.tag = d
                 }
             }
         }
     }
-
 }

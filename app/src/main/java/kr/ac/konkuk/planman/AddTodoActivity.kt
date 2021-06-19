@@ -69,13 +69,13 @@ class AddTodoActivity : AppCompatActivity() {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun init() {
-        val types = db.readCategory().map{
+        val types = db.readCategory().map {
             it.type
         }.toList()
 
-        if(types.isEmpty()){
-            binding.typeSpinner.visibility= View.GONE
-        }else{
+        if (types.isEmpty()) {
+            binding.typeSpinner.visibility = View.GONE
+        } else {
             val spinnerAdapter =
                 ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, types)
             binding.typeSpinner.adapter = spinnerAdapter
@@ -97,136 +97,160 @@ class AddTodoActivity : AppCompatActivity() {
                 //find
                 val index = types.indexOf(selectedType)
                 if (index != -1) {
-                    Toast.makeText(this, "${selectedType}에 새로운 할 일을 추가합니다", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "${selectedType}에 새로운 할 일을 추가합니다", Toast.LENGTH_SHORT)
+                        .show()
                     binding.typeSpinner.setSelection(index)
                 }
             }
-        }
-
-
-
-        binding.dropDownWebAddress.addTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_find_in_page_24)
-        binding.dropDownWebAddress.addTodoCategoryTitle.text = "웹사이트"
-        initSwap(binding.dropDownWebAddress, binding.editTextTextWebAddress)
-
-        binding.dropDownPhoneNumber.addTodoCategoryTitle.text = "전화번호"
-        initSwap(binding.dropDownPhoneNumber, binding.editTextPhoneNumber)
-
-        binding.dropDownLocation.addTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_map_24)
-        binding.dropDownLocation.addTodoCategoryTitle.text = "장소"
-        initSwap(binding.dropDownLocation, binding.map)
-
-        val transImage = binding.transparentImage
-        transImage.setOnTouchListener { _, event ->
-            var action = event.action
-            when (action) {
-                MotionEvent.ACTION_DOWN -> {
-                    binding.root.requestDisallowInterceptTouchEvent(true)
-                    false
+            if (selectedType != null) {
+                //find
+                val index = types.indexOf(selectedType!!)
+                if (index != -1) {
+                    binding.typeSpinner.setSelection(0)
                 }
-                MotionEvent.ACTION_UP -> {
-                    binding.root.requestDisallowInterceptTouchEvent(true)
-                    false
-                }
-                MotionEvent.ACTION_MOVE -> {
-                    binding.root.requestDisallowInterceptTouchEvent(true)
-                    false
-                }
-                else -> true
             }
-        }
 
-        val mapFragment =
-            supportFragmentManager.findFragmentById(R.id.map_frag) as SupportMapFragment
-        mapFragment.getMapAsync { it ->
-            googleMap = it
-            if (data.id.toInt() != -1) {
-                val loc = data.attachment.location!!.split(" ")
-                googleMap.animateCamera(
-                    CameraUpdateFactory.newLatLngZoom(
-                        LatLng(
-                            loc[0].toDouble(),
-                            loc[1].toDouble()
-                        ), 11.0f
+
+
+            binding.dropDownWebAddress.addTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_find_in_page_24)
+            binding.dropDownWebAddress.addTodoCategoryTitle.text = "웹사이트"
+            initSwap(binding.dropDownWebAddress, binding.editTextTextWebAddress)
+
+            binding.dropDownPhoneNumber.addTodoCategoryTitle.text = "전화번호"
+            initSwap(binding.dropDownPhoneNumber, binding.editTextPhoneNumber)
+
+            binding.dropDownLocation.addTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_map_24)
+            binding.dropDownLocation.addTodoCategoryTitle.text = "장소"
+            initSwap(binding.dropDownLocation, binding.map)
+
+            val transImage = binding.transparentImage
+            transImage.setOnTouchListener { _, event ->
+                var action = event.action
+                when (action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        binding.root.requestDisallowInterceptTouchEvent(true)
+                        false
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        binding.root.requestDisallowInterceptTouchEvent(true)
+                        false
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+                        binding.root.requestDisallowInterceptTouchEvent(true)
+                        false
+                    }
+                    else -> true
+                }
+            }
+
+            val mapFragment =
+                supportFragmentManager.findFragmentById(R.id.map_frag) as SupportMapFragment
+            mapFragment.getMapAsync { it ->
+                googleMap = it
+                if (data.id.toInt() != -1) {
+                    val loc = data.attachment.location!!.split(" ")
+                    googleMap.animateCamera(
+                        CameraUpdateFactory.newLatLngZoom(
+                            LatLng(
+                                loc[0].toDouble(),
+                                loc[1].toDouble()
+                            ), 11.0f
+                        )
                     )
-                )
-                pos = LatLng(loc[0].toDouble(), loc[1].toDouble())
-            } else
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(seoul, 11.0f))
-            googleMap.setMinZoomPreference(8.0f)
-            googleMap.setMaxZoomPreference(16.0f)
-            googleMap.setOnMapClickListener {
-                val option = MarkerOptions()
-                option.position(it)
-                option.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)) // 나중에 테마 색으로 바꿀 것
-                googleMap.addMarker(option)
-                pos = it
-            }
-        }
-
-
-        binding.textConfirmTime.isVisible = false
-        binding.dropDownSetDate.addTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_edit_calendar_24)
-        binding.dropDownSetDate.addTodoCategoryTitle.text = "날짜/시간"
-        initSwap(binding.dropDownSetDate, binding.calendarView)
-
-        var dateTime : LocalDateTime? = null
-        binding.calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
-            val dlgBinding = AddTodoTimepickerBinding.inflate(layoutInflater)
-            val dlgBuilder = AlertDialog.Builder(this)
-            dlgBuilder.setView(dlgBinding.root).setPositiveButton("확인") { _, _ ->
-                data.notification.notifyDateTime = "${year}-${month + 1}-${dayOfMonth}" +
-                        "-${dlgBinding.timePicker.hour}-${dlgBinding.timePicker.minute}"
-                Log.i("dateTimeFormat", data.notification.notifyDateTime!!)
-
-                var dateTime = LocalDateTime.of(
-                    year,
-                    month + 1,
-                    dayOfMonth,
-                    dlgBinding.timePicker.hour,
-                    dlgBinding.timePicker.minute
-                )
-                var dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분")
-                binding.textConfirmTime.text = dateTime!!.format(dateTimeFormatter)
-                binding.textConfirmTime.isVisible = true
-            }
-                .setNegativeButton("취소") { _, _ ->
+                    pos = LatLng(loc[0].toDouble(), loc[1].toDouble())
+                } else
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(seoul, 11.0f))
+                googleMap.setMinZoomPreference(8.0f)
+                googleMap.setMaxZoomPreference(16.0f)
+                googleMap.setOnMapClickListener {
+                    val option = MarkerOptions()
+                    option.position(it)
+                    val category: ArrayList<CategoryData> = db.readCategory()
+                    val index = category.indexOfFirst {
+                        it.type == selectedType
+                    }
+                    val color = category[index].textColor
+                    var markerColor = BitmapDescriptorFactory.HUE_CYAN
+                    if (color == "파랑")
+                        markerColor = BitmapDescriptorFactory.HUE_BLUE
+                    else if (color == "노랑")
+                        markerColor = BitmapDescriptorFactory.HUE_YELLOW
+                    else if (color == "빨강")
+                        markerColor = BitmapDescriptorFactory.HUE_RED
+                    option.icon(BitmapDescriptorFactory.defaultMarker(markerColor)) // 나중에 테마 색으로 바꿀 것
+                    googleMap.clear()
+                    googleMap.addMarker(option)
+                    pos = it
                 }
-                .show()
-        }
+            }
 
-        binding.dropDownSetLocation.addTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_place_24)
-        binding.dropDownSetLocation.addTodoCategoryTitle.text = "거리 반경"
-        initSwap(binding.dropDownSetLocation, binding.editTextRadius)
 
-        binding.submitButton.setOnClickListener {
+            binding.textConfirmTime.isVisible = false
+            binding.dropDownSetDate.addTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_edit_calendar_24)
+            binding.dropDownSetDate.addTodoCategoryTitle.text = "날짜/시간"
+            initSwap(binding.dropDownSetDate, binding.calendarView)
 
-            data.title = binding.editTextTodoTitle.text.toString()
-            data.content = binding.editTextTodo.text.toString()
-            data.type = selectedType
-            data.attachment.webSite = binding.editTextTextWebAddress.text.toString()
-            if (pos != null)
-                data.attachment.location = "${pos!!.latitude} ${pos!!.longitude}"
-            data.attachment.phoneNumber = binding.editTextPhoneNumber.text.toString()
-            data.notification.notifyRadius = binding.editTextRadius.text.toString()
+            var dateTime: LocalDateTime? = null
+            binding.calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
+                val dlgBinding = AddTodoTimepickerBinding.inflate(layoutInflater)
+                val dlgBuilder = AlertDialog.Builder(this)
+                dlgBuilder.setView(dlgBinding.root).setPositiveButton("확인") { _, _ ->
+                    data.notification.notifyDateTime = "${year}-${month + 1}-${dayOfMonth}" +
+                            "-${dlgBinding.timePicker.hour}-${dlgBinding.timePicker.minute}"
+                    Log.i("dateTimeFormat", data.notification.notifyDateTime!!)
 
-            val db = DB(this)
-            db.insertMyData(data)
+                    var dateTime = LocalDateTime.of(
+                        year,
+                        month + 1,
+                        dayOfMonth,
+                        dlgBinding.timePicker.hour,
+                        dlgBinding.timePicker.minute
+                    )
+                    var dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분")
+                    binding.textConfirmTime.text = dateTime!!.format(dateTimeFormatter)
+                    binding.textConfirmTime.isVisible = true
+                }
+                    .setNegativeButton("취소") { _, _ ->
+                    }
+                    .show()
+            }
 
-            //시간 예약
-            timeNotificationManager = TimeAlarmManager()
-            if (data.notification.notifyDateTime != null) {
-                //sendBroadcast(Intent("alarm.test"))
+            binding.dropDownSetLocation.addTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_place_24)
+            binding.dropDownSetLocation.addTodoCategoryTitle.text = "거리 반경"
+            initSwap(binding.dropDownSetLocation, binding.editTextRadius)
+
+            binding.submitButton.setOnClickListener {
+
+                data.title = binding.editTextTodoTitle.text.toString()
+                data.content = binding.editTextTodo.text.toString()
+                data.type = selectedType
+                data.attachment.webSite = binding.editTextTextWebAddress.text.toString()
+                try {
+                    data.attachment.location = "${pos?.latitude} ${pos?.longitude}"
+                } catch (e: kotlin.UninitializedPropertyAccessException) {
+                    data.attachment.location = ""
+                }
+                data.attachment.phoneNumber = binding.editTextPhoneNumber.text.toString()
+                data.notification.notifyRadius = binding.editTextRadius.text.toString()
+
+                val db = DB(this)
+                db.insertMyData(data)
+
+                //시간 예약
+                timeNotificationManager = TimeAlarmManager()
+                if (data.notification.notifyDateTime != null) {
+                    //sendBroadcast(Intent("alarm.test"))
 //                timeNotificationManager.reservationTimeAlarm(data, this)
 
 
 //                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis
 //                    , AlarmManager.INTERVAL_FIFTEEN_MINUTES
 //                    , pendingIntent)
-            }
+                }
 
-            finish()
-            Toast.makeText(this, "할일이 추가되었습니다", Toast.LENGTH_LONG).show()
+                finish()
+                Toast.makeText(this, "할일이 추가되었습니다", Toast.LENGTH_LONG).show()
+            }
         }
     }
 
