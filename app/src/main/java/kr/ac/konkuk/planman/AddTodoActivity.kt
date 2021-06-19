@@ -70,17 +70,15 @@ class AddTodoActivity : AppCompatActivity() {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun init() {
-        if(data.id.toInt()!= -1){
+        if (data.id.toInt() != -1) {
             binding.submitButton.setText("할 일 수정")
         }
 
-        val types = db.readCategory().map {
+        val types = ArrayList(db.readCategory().map {
             it.type
-        }.toList()
+        }.toList())
+        types.add(0, "카테고리 없음")
 
-        if (types.isEmpty()) {
-            binding.typeSpinner.visibility = View.GONE
-        }
         val spinnerAdapter =
             ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, types)
         binding.typeSpinner.adapter = spinnerAdapter
@@ -92,7 +90,10 @@ class AddTodoActivity : AppCompatActivity() {
                     position: Int,
                     id: Long
                 ) {
-                    selectedType = types[position]
+                    if (position != 0)
+                        selectedType = types[position]
+                    else
+                        selectedType = null
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -290,9 +291,9 @@ class AddTodoActivity : AppCompatActivity() {
 
             val db = DB(this)
             //remove old data
-            if(data.id.toInt()== -1){
+            if (data.id.toInt() == -1) {
                 db.insertMyData(data)
-            }else{
+            } else {
                 db.updateMyData(data)
             }
 
