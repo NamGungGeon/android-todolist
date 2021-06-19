@@ -53,6 +53,7 @@ class CheckTodoActivity : AppCompatActivity() {
         if (data.attachment.webSite == "")
             binding.checkWebAddress.checkTodoLayout.visibility= View.GONE
         else{
+            binding.checkWebAddress.checkTodoLayout.visibility= View.VISIBLE
             binding.checkWebAddress.checkTodoCategoryContent.text = data.attachment.webSite
             binding.checkWebAddress.checkTodoCategoryContent.setOnClickListener {
                 var url= data.attachment.webSite
@@ -74,8 +75,10 @@ class CheckTodoActivity : AppCompatActivity() {
         binding.checkPhoneNumber.checkTodoCategoryTitle.text = "전화번호"
         if (data.attachment.phoneNumber == "")
             binding.checkPhoneNumber.checkTodoLayout.visibility= View.GONE
-        else
+        else {
+            binding.checkPhoneNumber.checkTodoLayout.visibility= View.VISIBLE
             binding.checkPhoneNumber.checkTodoCategoryContent.text = data.attachment.phoneNumber
+        }
 
         if (data.attachment.location == "")
             binding.checkTodoMap.visibility= View.GONE
@@ -98,6 +101,8 @@ class CheckTodoActivity : AppCompatActivity() {
                 binding.checkTodoMap.visibility= View.GONE
             else
                 mapFragment.getMapAsync {
+                    binding.checkTodoMap.visibility= View.VISIBLE
+
                     googleMap = it
                     googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11.0f))
                     googleMap.setMinZoomPreference(8.0f)
@@ -130,6 +135,7 @@ class CheckTodoActivity : AppCompatActivity() {
         if (data.notification.notifyDateTime == null)
             binding.checkDateTime.checkTodoLayout.visibility= View.GONE
         else {
+            binding.checkDateTime.checkTodoLayout.visibility= View.VISIBLE
             val date = data.notification.notifyDateTime!!.split("-")
             val dateTime = LocalDateTime.of(
                 date[0].toInt(),
@@ -146,8 +152,10 @@ class CheckTodoActivity : AppCompatActivity() {
         binding.checkRadius.checkTodoCategoryTitle.text = "거리 반경"
         if (data.notification.notifyRadius == "")
             binding.checkRadius.checkTodoLayout.visibility= View.GONE
-        else
+        else {
+            binding.checkRadius.checkTodoLayout.visibility= View.VISIBLE
             binding.checkRadius.checkTodoCategoryContent.text = data.notification.notifyRadius
+        }
 
         binding.editButton.setOnClickListener {
             val intent = Intent(applicationContext, AddTodoActivity::class.java)
