@@ -7,7 +7,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
@@ -41,7 +40,7 @@ class CheckTodoActivity : AppCompatActivity() {
         if (string != null)
             layout.checkTodoCategoryContent.text = string
         else
-            layout.checkTodoLayout.isVisible = false
+            layout.checkTodoLayout.visibility= View.GONE
     }
 
     private fun init() {
@@ -52,7 +51,7 @@ class CheckTodoActivity : AppCompatActivity() {
         binding.checkWebAddress.checkTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_find_in_page_24)
         binding.checkWebAddress.checkTodoCategoryTitle.text = "웹사이트"
         if (data.attachment.webSite == "")
-            binding.checkWebAddress.checkTodoLayout.isVisible = false
+            binding.checkWebAddress.checkTodoLayout.visibility= View.GONE
         else{
             binding.checkWebAddress.checkTodoCategoryContent.text = data.attachment.webSite
             binding.checkWebAddress.checkTodoCategoryContent.setOnClickListener {
@@ -74,15 +73,17 @@ class CheckTodoActivity : AppCompatActivity() {
 
         binding.checkPhoneNumber.checkTodoCategoryTitle.text = "전화번호"
         if (data.attachment.phoneNumber == "")
-            binding.checkPhoneNumber.checkTodoLayout.isVisible = false
+            binding.checkPhoneNumber.checkTodoLayout.visibility= View.GONE
         else
             binding.checkPhoneNumber.checkTodoCategoryContent.text = data.attachment.phoneNumber
 
         if (data.attachment.location == "")
-            binding.checkTodoMap.isVisible = false
+            binding.checkTodoMap.visibility= View.GONE
         else {
-            if (data.attachment.location == null)
+            if (data.attachment.location == null){
+                binding.checkTodoMap.visibility= View.GONE
                 return
+            }
 
             val location = data.attachment.location!!.split(" ")
             var latLng: LatLng? = null
@@ -94,7 +95,7 @@ class CheckTodoActivity : AppCompatActivity() {
             val mapFragment =
                 supportFragmentManager.findFragmentById(R.id.map_frag2) as SupportMapFragment
             if (latLng == null)
-                mapFragment.requireView().visibility = View.GONE
+                binding.checkTodoMap.visibility= View.GONE
             else
                 mapFragment.getMapAsync {
                     googleMap = it
@@ -125,9 +126,9 @@ class CheckTodoActivity : AppCompatActivity() {
         }
 
         binding.checkDateTime.checkTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_edit_calendar_24)
-        binding.checkDateTime.checkTodoCategoryContent.text = "날짜/시간"
+        binding.checkDateTime.checkTodoCategoryTitle.text = "날짜/시간"
         if (data.notification.notifyDateTime == null)
-            binding.checkDateTime.checkTodoLayout.isVisible = false
+            binding.checkDateTime.checkTodoLayout.visibility= View.GONE
         else {
             val date = data.notification.notifyDateTime!!.split("-")
             val dateTime = LocalDateTime.of(
@@ -142,9 +143,9 @@ class CheckTodoActivity : AppCompatActivity() {
         }
 
         binding.checkRadius.checkTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_place_24)
-        binding.checkRadius.checkTodoCategoryContent.text = "거리 반경"
+        binding.checkRadius.checkTodoCategoryTitle.text = "거리 반경"
         if (data.notification.notifyRadius == "")
-            binding.checkRadius.checkTodoLayout.isVisible = false
+            binding.checkRadius.checkTodoLayout.visibility= View.GONE
         else
             binding.checkRadius.checkTodoCategoryContent.text = data.notification.notifyRadius
 
@@ -168,6 +169,7 @@ class CheckTodoActivity : AppCompatActivity() {
                 }.create().show()
         }
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         val updatedData= DB(this).readMyData(this.data.id.toInt())

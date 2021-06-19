@@ -63,19 +63,13 @@
                 android:id="@+id/checkWebAddress"
                 layout="@layout/check_todo_category"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="10dp" />
+                android:layout_height="wrap_content" />
 
             <include
                 android:id="@+id/checkPhoneNumber"
                 layout="@layout/check_todo_category"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="10dp" />
+                android:layout_height="wrap_content" />
 
             <RelativeLayout
                 android:id="@+id/check_todo_map"
@@ -114,19 +108,13 @@
                 android:id="@+id/checkDateTime"
                 layout="@layout/check_todo_category"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="10dp" />
+                android:layout_height="wrap_content" />
 
             <include
                 android:id="@+id/checkRadius"
                 layout="@layout/check_todo_category"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="10dp" />
+                android:layout_height="wrap_content" />
             <View
                 android:layout_width="match_parent"
                 android:layout_height="64dp"/>
