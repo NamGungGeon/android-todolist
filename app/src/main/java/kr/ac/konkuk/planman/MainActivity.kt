@@ -73,6 +73,8 @@ class MainActivity : AppCompatActivity() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     onViewModeChanged(position)
+                    
+                    todoListPager.isUserInputEnabled = position != 2
                 }
             })
             todoListPager.offscreenPageLimit = todoListVisualizers.size
