@@ -67,20 +67,25 @@ class CalendarTodoFragment : Fragment() {
     }
 
     private fun init() {
-        categoryList = DB(requireContext()).readCategory()
+        Thread{
+            categoryList = DB(requireContext()).readCategory()
 
-        val selectedCategory = filterTodoViewModel.selectedCategory.value
-        val searchKeyword = filterTodoViewModel.searchKeyword.value
-        todoList = ArrayList(DB(requireContext()).readMyData().filter { todo ->
-            if (searchKeyword?.isNotEmpty() == true)
-                (todo.title != null && todo.title!!.contains(searchKeyword.toString()))
-                        || (todo.content != null && todo.content!!.contains(searchKeyword.toString()))
-            else
-                if (selectedCategory != null)
-                    todo.type != null && todo.type!! == selectedCategory
-                else true
-        }.toList())
-        initCalendar()
+            val selectedCategory = filterTodoViewModel.selectedCategory.value
+            val searchKeyword = filterTodoViewModel.searchKeyword.value
+            todoList = ArrayList(DB(requireContext()).readMyData().filter { todo ->
+                if (searchKeyword?.isNotEmpty() == true)
+                    (todo.title != null && todo.title!!.contains(searchKeyword.toString()))
+                            || (todo.content != null && todo.content!!.contains(searchKeyword.toString()))
+                else
+                    if (selectedCategory != null)
+                        todo.type != null && todo.type!! == selectedCategory
+                    else true
+            }.toList())
+            activity?.runOnUiThread{
+                initCalendar()
+            }
+        }.start()
+
     }
 
     private fun setCalendarMonth(month: YearMonth = YearMonth.now()) {
