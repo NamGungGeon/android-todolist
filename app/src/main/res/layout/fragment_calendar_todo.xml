@@ -51,25 +51,29 @@
                 android:overScrollMode="never"
                 android:id="@+id/calendarView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                app:cv_hasBoundaries="false"
                 app:cv_monthHeaderResource="@layout/calendar_header_layout"
                 app:cv_dayViewResource="@layout/calendar_day_layout" />
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/exFiveRv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false" />
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="32dp"/>
 
             <TextView
-                android:visibility="gone"
-                android:layout_marginBottom="16dp"
+                tools:text="Title"
                 android:textStyle="bold"
                 android:textSize="24dp"
                 android:id="@+id/selectedDayText"
                 android:textColor="@color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <TextView
+                tools:text="SubTitle"
+                android:layout_marginBottom="16dp"
+                android:textSize="16dp"
+                android:id="@+id/selectedDayTodoCntText"
+                android:textColor="#aaaaaa"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
             <fragment

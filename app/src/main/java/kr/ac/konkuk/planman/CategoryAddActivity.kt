@@ -29,18 +29,18 @@ class CategoryAddActivity : AppCompatActivity() {
 
     lateinit var categoryName : String
 
+    val db = DB(this)
     var data: ArrayList<CategoryData> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCategoryAddBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        supportActionBar?.hide()
+        supportActionBar?.title= "카테고리 추가"
+
         initSpinner()
         initPreview()
         createCategory()
-
-
     }
 
     private fun initSpinner() {
@@ -139,6 +139,9 @@ class CategoryAddActivity : AppCompatActivity() {
 
     private fun createCategory() {
         binding!!.categoryAddTodoBtnAdd.setOnClickListener {
+            //DB insert category data
+            db.insertCategory(CategoryData(categoryName, inputTextSize, inputTextColor, inputTextStyle))
+
             val intent = Intent()
             intent.putExtra("addCategoryData", CategoryData(categoryName, inputTextSize, inputTextColor, inputTextStyle))
             setResult(Activity.RESULT_OK, intent)

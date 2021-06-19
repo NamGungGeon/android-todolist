@@ -14,6 +14,7 @@
     android:padding="20dp">
 
     <TextView
+        android:visibility="gone"
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -38,6 +39,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
+        android:paddingHorizontal="10dp"
         android:background="@drawable/check_category_box"/>
 
 
@@ -67,15 +69,24 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"/>
 
-
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/mapView"
+    <RelativeLayout
+        android:id="@+id/check_todo_map"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="200dp"
         android:layout_marginTop="5dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:background="@drawable/check_category_box"/>
+        android:layout_marginRight="20dp">
+    <fragment
+        android:id="@+id/map_frag2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:name="com.google.android.gms.maps.SupportMapFragment"/>
+    <ImageView
+        android:id="@+id/transparent_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@android:color/transparent"/>
+    </RelativeLayout>
 
     <TextView
         android:layout_width="wrap_content"

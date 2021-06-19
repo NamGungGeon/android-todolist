@@ -18,13 +18,12 @@ class TimeAlarmReceiver : BroadcastReceiver() {
     lateinit var mediaPlayer : MediaPlayer
     val id = "TimeChannel"
     val name = "TimeCheckChannel"
-    lateinit var data : MyData
+    lateinit var data : MyData2
 
     //기기가 다시 시작되면 알람 시작
     override fun onReceive(context: Context?, intent: Intent?) {
         val getBundle = intent!!.getParcelableExtra<Bundle>("timeDataByBundle")
-        data = getBundle!!.getSerializable("bundleData") as MyData
-
+        data = getBundle!!.getSerializable("bundleData") as MyData2
 
         //NotificationChannel, Builder 설정
         val notificationChannel = NotificationChannel(id, name, android.app.NotificationManager.IMPORTANCE_DEFAULT)
@@ -55,35 +54,5 @@ class TimeAlarmReceiver : BroadcastReceiver() {
         val notification = builder.build()
         manager.notify(10, notification)
 
-//        case 1
-//         */
-//        val notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-//        val ringtone = RingtoneManager.getRingtone(context, notification)
-//
-//        ringtone.play()
-
-        /*
-        case 2 : 오류있음
-         */
-//        var alert = RingtoneManager.getDefaultUri(android.media.RingtoneManager.TYPE_ALARM)
-//        mediaPlayer = MediaPlayer()
-//        mediaPlayer.setDataSource(context!!, alert)
-//
-//        val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-
-
-
-
-//        if (intent!!.action == "android.intent.action.BOOT_COMPLETED") {
-//
-//        }
-
-//        mediaPlayer = MediaPlayer.create(this, R.raw.alarm)
-//        mediaPlayer.start()
-
     }
-
-
-
-
 }

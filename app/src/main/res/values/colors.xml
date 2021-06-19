@@ -28,4 +28,6 @@
     <color name="list_blue">#287FB9</color>
     <color name="list_red">#D35415</color>
     <color name="list_yellow">#F39D19</color>
+
+    <color name="light_gray">#aaaaaa</color>
 </resources>

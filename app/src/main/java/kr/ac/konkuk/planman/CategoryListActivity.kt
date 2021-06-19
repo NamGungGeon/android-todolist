@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import kr.ac.konkuk.planman.databinding.ActivityCategoryListBinding
@@ -14,15 +15,17 @@ class CategoryListActivity : AppCompatActivity() {
     private val MODIFY_TO_DO_REQUEST_CODE = 200
     private var selectedItemPosition : Int = 0
 
-    var categoryData:ArrayList<CategoryData> = ArrayList()
+    lateinit var categoryData:ArrayList<CategoryData>
     lateinit var binding: ActivityCategoryListBinding
     lateinit var adapter: CategoryListAdapter
+
+    val db = DB(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCategoryListBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        supportActionBar?.hide()
+        supportActionBar?.title= "카테고리 관리"
 
         initAddBtn()
         initCategoryListData()
@@ -42,9 +45,7 @@ class CategoryListActivity : AppCompatActivity() {
         //textSize : 크게, 보통, 작게
         //textColor : 검정, 파랑, 노랑, 빨강 등
         //textStyle : 일반, 진하게, 이탤릭체
-        categoryData.add(CategoryData("업무", "보통", "파랑", "보통"))
-        categoryData.add(CategoryData("약속", "보통", "노랑", "보통"))
-        categoryData.add(CategoryData("구매", "보통", "빨강", "보통"))
+        categoryData = db.readCategory()
     }
 
     private fun initCategoryListRecyclerView() {
@@ -62,10 +63,8 @@ class CategoryListActivity : AppCompatActivity() {
                     selectedItemPosition = position
                     val intent = Intent(this@CategoryListActivity, CategoryModifyActivity::class.java)
                     intent.putExtra("category", data)
-                    //Log.e("test", "success")
                     startActivityForResult(intent, MODIFY_TO_DO_REQUEST_CODE)   //startActivityForResult
                 }
-
             }
             categoryList.adapter = adapter
         }
@@ -92,7 +91,6 @@ class CategoryListActivity : AppCompatActivity() {
                             //Log.e("test", "success")
                             startActivityForResult(intent, MODIFY_TO_DO_REQUEST_CODE)   //startActivityForResult
                         }
-
                     }
                     binding!!.categoryList.adapter = adapter
                 }
@@ -100,7 +98,7 @@ class CategoryListActivity : AppCompatActivity() {
 
             MODIFY_TO_DO_REQUEST_CODE -> {
                 if (resultCode == Activity.RESULT_CANCELED) {       //삭제 될때
-                    categoryData.removeAt(selectedItemPosition)
+                    categoryData = db.readCategory()
                     adapter = CategoryListAdapter(categoryData)
                     adapter.itemClickListener = object : CategoryListAdapter.OnItemClickListener {
                         override fun OnItemClick(
@@ -121,10 +119,15 @@ class CategoryListActivity : AppCompatActivity() {
                 }
                 else if (resultCode == Activity.RESULT_OK) {    //수정 될때
                     val getDataFromModify = data?.getSerializableExtra("modifyTodo") as CategoryData
-                    categoryData[selectedItemPosition].type = getDataFromModify.type
-                    categoryData[selectedItemPosition].textSize = getDataFromModify.textSize
-                    categoryData[selectedItemPosition].textColor = getDataFromModify.textColor
-                    categoryData[selectedItemPosition].textStyle = getDataFromModify.textStyle
+
+
+                    //DB update 부분
+                    categoryData = db.readCategory()
+
+//                    categoryData[selectedItemPosition].type = getDataFromModify.type
+//                    categoryData[selectedItemPosition].textSize = getDataFromModify.textSize
+//                    categoryData[selectedItemPosition].textColor = getDataFromModify.textColor
+//                    categoryData[selectedItemPosition].textStyle = getDataFromModify.textStyle
 
                     adapter = CategoryListAdapter(categoryData)
 

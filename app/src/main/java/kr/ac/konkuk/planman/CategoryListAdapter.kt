@@ -1,8 +1,8 @@
 package kr.ac.konkuk.planman
 
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +22,7 @@ class CategoryListAdapter(val items:ArrayList<CategoryData>) : RecyclerView.Adap
     var itemClickListener:OnItemClickListener? = null
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val typeText : TextView = itemView.findViewById(R.id.todoListText)
+        val typeText : TextView = itemView.findViewById(R.id.todoListTextRow)
         init {
             itemView.setOnClickListener {
                 itemClickListener?.OnItemClick(this, it, items[adapterPosition], adapterPosition)
@@ -46,14 +46,14 @@ class CategoryListAdapter(val items:ArrayList<CategoryData>) : RecyclerView.Adap
         holder.typeText.text = items[position].type
 
         holder.apply { 
-            typeText.text = items[position].type
 
             //textSize select : 크게, 보통, 작게
             if (items[position].textSize == "크게") {
                 typeText.textSize = 24f
             } else if (items[position].textSize == "보통") {
                 typeText.textSize = 18f
-            } else {    //작게
+                Log.e("test", "보통크기")
+            } else if (items[position].textSize == "작게"){    //작게
                 typeText.textSize = 14f
             }
 
@@ -61,13 +61,16 @@ class CategoryListAdapter(val items:ArrayList<CategoryData>) : RecyclerView.Adap
             if (items[position].textColor == "파랑") {
                 typeText.setTextColor(Color.parseColor("#287FB9"))
                 typeText.setBackgroundResource(R.drawable.list_edge_work)
+                Log.e("파랑", "test")
             } else if (items[position].textColor == "빨강") {
                 typeText.setTextColor(Color.parseColor("#D35415"))
                 typeText.setBackgroundResource(R.drawable.list_edge_purchase)
+                Log.e("빨강", "test")
             } else if (items[position].textColor == "노랑") {
                 typeText.setTextColor(Color.parseColor("#F39D19"))
                 typeText.setBackgroundResource(R.drawable.list_edge_appointment)
-            } else {    //검정
+                Log.e("노랑", "test")
+            } else if (items[position].textColor == "검정"){    //검정
                 typeText.setTextColor(Color.BLACK)
                 typeText.setBackgroundResource(R.drawable.list_edge_black)
             }
@@ -77,7 +80,7 @@ class CategoryListAdapter(val items:ArrayList<CategoryData>) : RecyclerView.Adap
                 typeText.setTypeface(typeText.typeface, Typeface.BOLD)
             } else if (items[position].textStyle == "보통") {
                 typeText.setTypeface(typeText.typeface, Typeface.NORMAL)
-            } else {    //이탤릭체
+            } else if (items[position].textStyle == "이탤릭체"){    //이탤릭체
                 typeText.setTypeface(typeText.typeface, Typeface.ITALIC)
             }
         }

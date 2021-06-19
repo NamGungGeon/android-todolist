@@ -1,5 +1,6 @@
 package kr.ac.konkuk.planman
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,21 +14,31 @@ import java.time.LocalDateTime
 
 class ListTodoFragment : Fragment() {
     var data: ArrayList<MyData2> = ArrayList()
+    var categoryDataList: ArrayList<CategoryData> = ArrayList()
+    var usingCategoryTypeList : ArrayList<String?> = ArrayList()
+
     lateinit var recyclerView: RecyclerView
-    private lateinit var binding: FragmentListTodoBinding
+    var binding: FragmentListTodoBinding? = null
+    lateinit var adapter : ListAdapter
+
+    val db = activity?.applicationContext?.let { DB(it) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_list_todo, container, false)
+        binding = FragmentListTodoBinding.inflate(layoutInflater, container, false)
+        return binding!!.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding = FragmentListTodoBinding.bind(view)
+    }
+
+    override fun onResume() {
+        super.onResume()
 
         initData()
         initRecyclerView()
@@ -36,10 +47,11 @@ class ListTodoFragment : Fragment() {
     private fun initData() {
         val db = DB(requireContext())
         data = db.readMyData()
-//        data = ArrayList()
-//        data.add(MyData("보고서 올리기", "계약 관련 보고서 김과장한테 올려야함", "업무", "noInfo", "noInfo", "noInfo", LocalDateTime.now(), "noInfo"))
-//        data.add(MyData("고성호 만나기", "일요일 밤 10시", "약속", "noInfo", "noInfo", "noInfo", LocalDateTime.now(), "noInfo"))
-//        data.add(MyData("이마트", "이마트에서 계란 사기", "구매", "noInfo", "noInfo", "noInfo", LocalDateTime.now(), "noInfo"))
+
+        //사용중인 카테고리 타입 리스트 가져온다.
+        for (i in data) {
+            usingCategoryTypeList.add(i.type)
+        }
     }
 
     fun setCustomData(data: ArrayList<MyData2>) {
@@ -47,10 +59,59 @@ class ListTodoFragment : Fragment() {
         initRecyclerView()
     }
 
+    fun isUsedCategoryData(categoryData: CategoryData) : Boolean {
+        for (i in usingCategoryTypeList) {
+            if (i == categoryData.type) {
+                return true
+            }
+        }
+        return false
+    }
+
+    fun setDefaultCategoryType(categoryData: CategoryData) {
+        data = db!!.readMyData()
+
+        for (i in data) {
+            if (i.type == categoryData.type) {
+                i.type = null
+            }
+        }
+    }
+
+    fun updateExistingCategoryData(categoryData: CategoryData, notModifiedCategoryData: CategoryData) {
+        data = db!!.readMyData()
+
+        for (i in data) {
+            if (i.type == notModifiedCategoryData.type) {
+                i.type = categoryData.type
+                db.updateMyData(i)
+            }
+        }
+    }
+
+
     private fun initRecyclerView() {
-        recyclerView = view!!.findViewById<RecyclerView>(R.id.list_recyclerView)
+        adapter = ListAdapter(data)
+        adapter.itemClickListener = object : ListAdapter.OnItemClickListener {
+            override fun OnItemClick(
+                holder: ListAdapter.ViewHolder,
+                view: View,
+                data: MyData2,
+                position: Int
+            ) {
+                val intent = Intent(activity, CheckTodoActivity::class.java)
+                intent.putExtra("data", data)
+                startActivity(intent)
+            }
+        }
+        recyclerView = requireView().findViewById<RecyclerView>(R.id.list_recyclerView)
         recyclerView.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        recyclerView.adapter = ListAdapter(data)
+        recyclerView.adapter = adapter
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = null
     }
 }

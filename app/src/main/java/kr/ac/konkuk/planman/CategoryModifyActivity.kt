@@ -10,6 +10,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.ListFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import kr.ac.konkuk.planman.databinding.ActivityCategoryModifyBinding
 
@@ -19,35 +20,52 @@ class CategoryModifyActivity : AppCompatActivity() {
     lateinit var textColorSpinner2 : Spinner
     lateinit var textStyleSpinner2 : Spinner
 
-    lateinit var categoryName : String
-
-    lateinit var inputTextSize : String
-    lateinit var inputTextColor : String
-    lateinit var inputTextStyle : String
+    var categoryName : String? = null
+    var inputTextSize : String? = null
+    var inputTextColor : String? = null
+    var inputTextStyle : String? = null
 
     var data : ArrayList<CategoryData> = ArrayList()
+    val db = DB(this)
+    var listTodoFragment = ListTodoFragment()
 
     lateinit var getData : CategoryData
+    lateinit var getDataNotModified : CategoryData
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCategoryModifyBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        supportActionBar?.hide()
         getData = intent.getSerializableExtra("category") as CategoryData
+        supportActionBar?.title= getData.type
+        getDataNotModified = CategoryData(getData.id, getData.type, getData.textSize, getData.textColor, getData.textStyle)
         initSpinner()
         initTitle()
         initPreView()
 
         binding!!.apply {
             deleteImg.setOnClickListener {
-                //Firebase 나 txt 파일 에서 지워주기
+                //DB delete category
+                if (listTodoFragment.isUsedCategoryData(getData)) {     //리스트 프래그먼트에서 해당 카테고리 내용 사용 중일 경우
+                    listTodoFragment.setDefaultCategoryType(getData)    //해당 데이터의 type = null 로 설정해 디폴트 타입으로 바꿔준다.
+                    db.deleteCategory(getData)
+                } else {
+                    db.deleteCategory(getData)
+                }
+
                 val intent = Intent()
                 setResult(Activity.RESULT_CANCELED, intent)
                 finish()
             }
 
             categoryModifyTodoBtn.setOnClickListener {
+                if (listTodoFragment.isUsedCategoryData(getDataNotModified)) { //리스트 프래그먼트에서 해당 카테고리 내용 사용 중일 경우
+                    listTodoFragment.updateExistingCategoryData(getData, getDataNotModified)
+                    db.updateCategory(getData)
+                } else {
+                    db.updateCategory(getData)
+                }
+
                 val intent = Intent()
                 intent.putExtra("modifyTodo", CategoryData(categoryName, inputTextSize, inputTextColor, inputTextStyle))
                 setResult(Activity.RESULT_OK, intent)
@@ -59,7 +77,7 @@ class CategoryModifyActivity : AppCompatActivity() {
 
     private fun initTitle() {
         //intent로 type 이름 가져와서 title 바꾼다
-        val type : String = getData.type
+        val type : String? = getData.type
         binding.categoryTitleText.text = "$type 카테고리"
     }
 
@@ -92,6 +110,8 @@ class CategoryModifyActivity : AppCompatActivity() {
                 data.clear()
                 data.add(CategoryData(categoryName, inputTextSize, inputTextColor, inputTextStyle))
                 binding!!.categoryPreviewModify.adapter = CategoryModifyAdapter(data)
+
+                getData.textSize = inputTextSize
             }
         }
 
@@ -110,6 +130,8 @@ class CategoryModifyActivity : AppCompatActivity() {
                 data.clear()
                 data.add(CategoryData(categoryName, inputTextSize, inputTextColor, inputTextStyle))
                 binding!!.categoryPreviewModify.adapter = CategoryModifyAdapter(data)
+
+                getData.textColor = inputTextColor
             }
         }
 
@@ -127,6 +149,8 @@ class CategoryModifyActivity : AppCompatActivity() {
                 data.clear()
                 data.add(CategoryData(categoryName, inputTextSize, inputTextColor, inputTextStyle))
                 binding!!.categoryPreviewModify.adapter = CategoryModifyAdapter(data)
+
+                getData.textStyle = inputTextStyle
             }
 
         }
@@ -175,10 +199,9 @@ class CategoryModifyActivity : AppCompatActivity() {
                 data.clear()
                 data.add(CategoryData(categoryName, inputTextSize, inputTextColor, inputTextStyle))
                 binding!!.categoryPreviewModify.adapter = CategoryModifyAdapter(data)
+
+                getData.type = it.toString()
             }
-
-
-
 
             data.add(CategoryData(categoryName, inputTextSize, inputTextColor, inputTextStyle))
 

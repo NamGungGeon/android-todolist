@@ -6,12 +6,22 @@ import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import kr.ac.konkuk.planman.databinding.ActivityCheckTodoBinding
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class CheckTodoActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityCheckTodoBinding
     lateinit var data: MyData2
+    lateinit var googleMap:GoogleMap
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,32 +32,88 @@ class CheckTodoActivity : AppCompatActivity() {
         init()
     }
 
-    private fun initText(textView: TextView, string: String?) {
+    private fun initText(layout: kr.ac.konkuk.planman.databinding.CheckTodoCategoryBinding, string: String?) {
         if(string != null)
-            textView.text = string
+            layout.checkTodoCategoryContent.text = string
         else
-            textView.isVisible = false
+            layout.checkTodoLayout.isVisible = false
     }
 
     private fun init() {
-        Toast.makeText(this, "check", Toast.LENGTH_LONG).show()
-        initText(binding.title, data.title)
-        initText(binding.checkTodoContent, data.content)
+        binding.title.text = data.title
+        binding.checkTodoContent.text = data.title
+        supportActionBar?.title= data.title
 
         binding.checkWebAddress.checkTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_find_in_page_24)
         binding.checkWebAddress.checkTodoCategoryTitle.text = "웹사이트"
-        initText(binding.checkWebAddress.checkTodoCategoryContent, data.attachment.webSite)
+        if (data.attachment.webSite == "")
+            binding.checkWebAddress.checkTodoLayout.isVisible = false
+        else
+            binding.checkWebAddress.checkTodoCategoryContent.text = data.attachment.webSite
 
         binding.checkPhoneNumber.checkTodoCategoryTitle.text = "전화번호"
-        initText(binding.checkPhoneNumber.checkTodoCategoryContent, data.attachment.phoneNumber)
+        if (data.attachment.phoneNumber == "")
+            binding.checkPhoneNumber.checkTodoLayout.isVisible = false
+        else
+            binding.checkPhoneNumber.checkTodoCategoryContent.text = data.attachment.phoneNumber
+
+        if (data.attachment.location == "")
+            binding.checkTodoMap.isVisible = false
+        else {
+            if(data.attachment.location== null)
+                return
+            
+            val location = data.attachment.location!!.split(" ")
+            val latLng = LatLng(location[0].toDouble(), location[1].toDouble())
+            val mapFragment = supportFragmentManager.findFragmentById(R.id.map_frag2) as SupportMapFragment
+            mapFragment.getMapAsync {
+                googleMap = it
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11.0f))
+                googleMap.setMinZoomPreference(8.0f)
+                googleMap.setMaxZoomPreference(16.0f)
+                val option = MarkerOptions()
+                option.position(latLng)
+                val db = DB(this)
+                val category:ArrayList<CategoryData> = db.readCategory()
+                val index = category.indexOfFirst {
+                    it.type == data.type
+                }
+                val color = category[index].textColor
+                var markerColor = BitmapDescriptorFactory.HUE_CYAN
+                if (color == "파랑")
+                    markerColor = BitmapDescriptorFactory.HUE_BLUE
+                else if (color == "노랑")
+                    markerColor = BitmapDescriptorFactory.HUE_YELLOW
+                else if (color == "빨강")
+                    markerColor = BitmapDescriptorFactory.HUE_RED
+                option.icon(BitmapDescriptorFactory.defaultMarker(markerColor))
+                googleMap.addMarker(option)
+            }
+        }
 
         binding.checkDateTime.checkTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_edit_calendar_24)
         binding.checkDateTime.checkTodoCategoryContent.text = "날짜/시간"
-        initText(binding.checkDateTime.checkTodoCategoryContent, data.notification.notifyDateTime.toString())
+        if (data.notification.notifyDateTime == null)
+            binding.checkDateTime.checkTodoLayout.isVisible = false
+        else {
+            val date = data.notification.notifyDateTime!!.split("-")
+            val dateTime = LocalDateTime.of(
+                date[0].toInt(),
+                date[1].toInt(),
+                date[2].toInt(),
+                date[3].toInt(),
+                date[4].toInt()
+            )
+            var dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분")
+            binding.checkDateTime.checkTodoCategoryContent.text = dateTime.format(dateTimeFormatter)
+        }
 
         binding.checkRadius.checkTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_place_24)
         binding.checkRadius.checkTodoCategoryContent.text = "거리 반경"
-        initText(binding.checkRadius.checkTodoCategoryContent, "tmp")
+        if (data.notification.notifyRadius == "")
+            binding.checkRadius.checkTodoLayout.isVisible = false
+        else
+            binding.checkRadius.checkTodoCategoryContent.text = data.notification.notifyRadius
 
         binding.editButton.setOnClickListener {
             val intent= Intent(applicationContext, AddTodoActivity::class.java)
@@ -55,7 +121,4 @@ class CheckTodoActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
-
-
-
 }
