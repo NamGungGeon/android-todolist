@@ -129,18 +129,18 @@ class AddTodoActivity : AppCompatActivity() {
             Toast.makeText(applicationContext, "touch", Toast.LENGTH_SHORT).show()
             when (action) {
                 MotionEvent.ACTION_DOWN -> {
-                    binding.root.setScrollingEnabled(false)
-                    binding.root.requestDisallowInterceptTouchEvent(true)
+                    binding.scrollView.setScrollingEnabled(false)
+                    binding.scrollView.requestDisallowInterceptTouchEvent(true)
                     false
                 }
                 MotionEvent.ACTION_UP -> {
-                    binding.root.setScrollingEnabled(true)
-                    binding.root.requestDisallowInterceptTouchEvent(true)
+                    binding.scrollView.setScrollingEnabled(true)
+                    binding.scrollView.requestDisallowInterceptTouchEvent(true)
                     false
                 }
                 MotionEvent.ACTION_MOVE -> {
-                    binding.root.setScrollingEnabled(false)
-                    binding.root.requestDisallowInterceptTouchEvent(true)
+                    binding.scrollView.setScrollingEnabled(false)
+                    binding.scrollView.requestDisallowInterceptTouchEvent(true)
                     false
                 }
                 else -> true
@@ -151,44 +151,50 @@ class AddTodoActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.map_frag) as SupportMapFragment
         mapFragment.getMapAsync { it ->
             it.setOnCameraMoveListener {
-                binding.root.setScrollingEnabled(false)
+                binding.scrollView.setScrollingEnabled(false)
             }
             it.setOnCameraIdleListener {
-                binding.root.setScrollingEnabled(true)
+                binding.scrollView.setScrollingEnabled(true)
             }
             googleMap = it
             val category: ArrayList<CategoryData> = db.readCategory()
             if (data.id.toInt() != -1) {
-                val loc = data.attachment.location!!.split(" ")
-                googleMap.moveCamera(
-                    CameraUpdateFactory.newLatLngZoom(
-                        LatLng(
-                            loc[0].toDouble(),
-                            loc[1].toDouble()
-                        ), 11.0f
-                    )
-                )
-                pos = LatLng(loc[0].toDouble(), loc[1].toDouble())
+                if (data.attachment.location != null) {
+                    try{
+                        val loc = data.attachment.location!!.split(" ")
+                        googleMap.moveCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                LatLng(
+                                    loc[0].toDouble(),
+                                    loc[1].toDouble()
+                                ), 11.0f
+                            )
+                        )
+                        pos = LatLng(loc[0].toDouble(), loc[1].toDouble())
 
-                val option = MarkerOptions()
-                option.position(pos)
+                        val option = MarkerOptions()
+                        option.position(pos)
 
-                val index = category.indexOfFirst {
-                    it.type == selectedType
+                        val index = category.indexOfFirst {
+                            it.type == selectedType
+                        }
+                        var markerColor = BitmapDescriptorFactory.HUE_CYAN
+                        if (index != -1) {
+                            val color = category[index].textColor
+                            if (color == "파랑")
+                                markerColor = BitmapDescriptorFactory.HUE_BLUE
+                            else if (color == "노랑")
+                                markerColor = BitmapDescriptorFactory.HUE_YELLOW
+                            else if (color == "빨강")
+                                markerColor = BitmapDescriptorFactory.HUE_RED
+                        }
+                        option.icon(BitmapDescriptorFactory.defaultMarker(markerColor)) // 나중에 테마 색으로 바꿀 것
+                        googleMap.clear()
+                        googleMap.addMarker(option)
+                    }catch (e: Exception){
+                        e.printStackTrace()
+                    }
                 }
-                var markerColor = BitmapDescriptorFactory.HUE_CYAN
-                if(index!= -1){
-                    val color = category[index].textColor
-                    if (color == "파랑")
-                        markerColor = BitmapDescriptorFactory.HUE_BLUE
-                    else if (color == "노랑")
-                        markerColor = BitmapDescriptorFactory.HUE_YELLOW
-                    else if (color == "빨강")
-                        markerColor = BitmapDescriptorFactory.HUE_RED
-                }
-                option.icon(BitmapDescriptorFactory.defaultMarker(markerColor)) // 나중에 테마 색으로 바꿀 것
-                googleMap.clear()
-                googleMap.addMarker(option)
             } else
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(seoul, 11.0f))
             googleMap.setMinZoomPreference(8.0f)
@@ -201,7 +207,7 @@ class AddTodoActivity : AppCompatActivity() {
                     it.type == selectedType
                 }
                 var markerColor = BitmapDescriptorFactory.HUE_CYAN
-                if(index!= -1){
+                if (index != -1) {
                     val color = category[index].textColor
                     if (color == "파랑")
                         markerColor = BitmapDescriptorFactory.HUE_BLUE
@@ -256,15 +262,15 @@ class AddTodoActivity : AppCompatActivity() {
 
             data.title = binding.editTextTodoTitle.text.toString()
             data.content = binding.editTextTodo.text.toString()
-            if(data.title!!.isEmpty() && data.content!!.isEmpty()){
+            if (data.title!!.isEmpty() && data.content!!.isEmpty()) {
                 Toast.makeText(this, "제목이나 내용 둘 중 하나는 입력해야 합니다", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            if(data.title!!.isEmpty()){
-                data.title= data.content!!
+            if (data.title!!.isEmpty()) {
+                data.title = data.content!!
             }
-            if(data.content!!.isEmpty()){
-                data.content= data.title
+            if (data.content!!.isEmpty()) {
+                data.content = data.title
             }
 
             data.type = selectedType

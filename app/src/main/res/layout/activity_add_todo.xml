@@ -1,219 +1,229 @@
 <?xml version="1.0" encoding="utf-8"?>
-<kr.ac.konkuk.planman.LockableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <kr.ac.konkuk.planman.LockableScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp"
-        tools:context=".AddTodoActivity">
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_marginBottom="16dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="20dp"
+            tools:context=".AddTodoActivity">
 
-            <Spinner
-                android:id="@+id/type_spinner"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                tools:listitem="@layout/support_simple_spinner_dropdown_item" />
+                android:layout_gravity="right"
+                android:layout_marginBottom="16dp"
+                android:orientation="vertical">
+
+                <Spinner
+                    android:id="@+id/type_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    tools:listitem="@layout/support_simple_spinner_dropdown_item" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/categoryTitleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="할 일"
+                android:textSize="40dp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/editTextTodoTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/textinputborder"
+                android:hint="제목을 입력해주세요."
+                android:inputType="textUri"
+                android:padding="10dp" />
+
+            <TextView
+                android:id="@+id/todoListText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:text="할 일 내용"
+                android:textSize="25dp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/editTextTodo"
+                android:layout_width="match_parent"
+                android:layout_height="85dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/textinputborder"
+                android:gravity="top|left"
+                android:hint="할 일을 작성해주세요."
+                android:inputType="textMultiLine"
+                android:maxLines="10"
+                android:padding="10dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:text="참고자료"
+                android:textSize="25dp"
+                android:textStyle="bold" />
+
+            <include
+                android:id="@+id/dropDownWebAddress"
+                layout="@layout/add_todo_categorybox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="10dp" />
+
+            <EditText
+                android:id="@+id/editTextTextWebAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/textinputborder"
+                android:hint="웹 주소를 입력해주세요."
+                android:inputType="textUri"
+                android:padding="10dp" />
+
+            <include
+                android:id="@+id/dropDownPhoneNumber"
+                layout="@layout/add_todo_categorybox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="10dp" />
+
+            <EditText
+                android:id="@+id/editTextPhoneNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/textinputborder"
+                android:hint="전화번호를 입력해주세요."
+                android:inputType="phone"
+                android:padding="10dp" />
+
+            <include
+                android:id="@+id/dropDownLocation"
+                layout="@layout/add_todo_categorybox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="10dp" />
+
+            <RelativeLayout
+                android:id="@+id/map"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="15dp">
+
+                <ImageView
+                    android:id="@+id/transparent_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@android:color/transparent"
+                    android:visibility="gone" />
+
+                <fragment
+                    android:id="@+id/map_frag"
+                    android:name="com.google.android.gms.maps.SupportMapFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:text="알림"
+                android:textSize="25dp"
+                android:textStyle="bold" />
+
+            <include
+                android:id="@+id/dropDownSetDate"
+                layout="@layout/add_todo_categorybox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="10dp" />
+
+            <CalendarView
+                android:id="@+id/calendarView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="15dp" />
+
+            <TextView
+                android:id="@+id/textConfirmTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="15dp"
+                android:text="time"
+                android:textStyle="bold" />
+
+            <include
+                android:id="@+id/dropDownSetLocation"
+                layout="@layout/add_todo_categorybox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="10dp" />
+
+            <EditText
+                android:id="@+id/editTextRadius"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/textinputborder"
+                android:hint="알림 반경을 입력해주세요(임시)"
+                android:inputType="phone"
+                android:padding="10dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="64dp" />
         </LinearLayout>
+    </kr.ac.konkuk.planman.LockableScrollView>
 
-        <TextView
-            android:id="@+id/categoryTitleText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="할 일"
-            android:textSize="40dp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/editTextTodoTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="15dp"
-            android:background="@drawable/textinputborder"
-            android:hint="제목을 입력해주세요."
-            android:inputType="textUri"
-            android:padding="10dp" />
-
-        <TextView
-            android:id="@+id/todoListText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:text="할 일 내용"
-            android:textSize="25dp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/editTextTodo"
-            android:layout_width="match_parent"
-            android:layout_height="85dp"
-            android:layout_margin="10dp"
-            android:background="@drawable/textinputborder"
-            android:gravity="top|left"
-            android:hint="할 일을 작성해주세요."
-            android:inputType="textMultiLine"
-            android:maxLines="10"
-            android:padding="10dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:text="참고자료"
-            android:textSize="25dp"
-            android:textStyle="bold" />
-
-        <include
-            android:id="@+id/dropDownWebAddress"
-            layout="@layout/add_todo_categorybox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="10dp" />
-
-        <EditText
-            android:id="@+id/editTextTextWebAddress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="15dp"
-            android:background="@drawable/textinputborder"
-            android:hint="웹 주소를 입력해주세요."
-            android:inputType="textUri"
-            android:padding="10dp" />
-
-        <include
-            android:id="@+id/dropDownPhoneNumber"
-            layout="@layout/add_todo_categorybox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="10dp" />
-
-        <EditText
-            android:id="@+id/editTextPhoneNumber"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="15dp"
-            android:background="@drawable/textinputborder"
-            android:hint="전화번호를 입력해주세요."
-            android:inputType="phone"
-            android:padding="10dp" />
-
-        <include
-            android:id="@+id/dropDownLocation"
-            layout="@layout/add_todo_categorybox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="10dp" />
-
-        <RelativeLayout
-            android:id="@+id/map"
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="15dp">
-
-            <ImageView
-                android:visibility="gone"
-                android:id="@+id/transparent_image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@android:color/transparent" />
-            <fragment
-                android:id="@+id/map_frag"
-                android:name="com.google.android.gms.maps.SupportMapFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-        </RelativeLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:text="알림"
-            android:textSize="25dp"
-            android:textStyle="bold" />
-
-        <include
-            android:id="@+id/dropDownSetDate"
-            layout="@layout/add_todo_categorybox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="10dp" />
-
-        <CalendarView
-            android:id="@+id/calendarView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="15dp" />
-
-        <TextView
-            android:id="@+id/textConfirmTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="15dp"
-            android:text="time"
-            android:textStyle="bold" />
-
-        <include
-            android:id="@+id/dropDownSetLocation"
-            layout="@layout/add_todo_categorybox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="10dp" />
-
-        <EditText
-            android:id="@+id/editTextRadius"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="15dp"
-            android:background="@drawable/textinputborder"
-            android:hint="알림 반경을 입력해주세요(임시)"
-            android:inputType="phone"
-            android:padding="10dp" />
-
-        <Button
-            android:id="@+id/submitButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:backgroundTint="@color/light_blue"
-            android:text="할 일 완료"
-            android:textStyle="bold" />
-    </LinearLayout>
-</kr.ac.konkuk.planman.LockableScrollView>
+    <Button
+        android:id="@+id/submitButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:text="할 일 추가"
+        android:textStyle="bold" />
+</RelativeLayout>
