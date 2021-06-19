@@ -147,6 +147,12 @@ class CalendarTodoFragment : Fragment() {
                             val dayTodoList = getDayTodoList(day.date)
 
                             val onDaySelected = fun() {
+                                if(selectedLocalDate == day.date){
+                                    selectedLocalDate= null
+                                    showTodoAsList(dayTodoList, day.date, true)
+                                    calendarView.notifyCalendarChanged()
+                                    return
+                                }
                                 //show selected day's todoList
                                 showTodoAsList(dayTodoList, day.date)
                                 selectedLocalDate = day.date
