@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.annotation.ColorInt
-import androidx.annotation.ColorRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -63,48 +62,55 @@ class CheckTodoActivity : AppCompatActivity() {
                 checkTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_menu_24)
                 checkTodoCategoryIcon.setColorFilter(useCategoryColor())
                 checkTodoLayout.visibility = View.VISIBLE
-                checkTodoCategoryTitle.also{tv->
+                checkTodoCategoryTitle.also { tv ->
                     tv.setText(data.type)
                     tv.setTextColor(useCategoryColor())
                 }
-                checkTodoCategoryContent.visibility= View.GONE
+                checkTodoCategoryContent.visibility = View.GONE
             }
         }
 
+        var webSite= data.attachment.webSite?: ""
         binding.checkWebAddress.checkTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_find_in_page_24)
         binding.checkWebAddress.checkTodoCategoryTitle.text = "웹사이트"
-        if (data.attachment.webSite == "")
+        if (webSite == "")
             binding.checkWebAddress.checkTodoLayout.visibility = View.GONE
         else {
             binding.checkWebAddress.checkTodoLayout.visibility = View.VISIBLE
-            binding.checkWebAddress.checkTodoCategoryContent.text = data.attachment.webSite
-            binding.checkWebAddress.checkTodoCategoryContent.setOnClickListener {
-                var url = data.attachment.webSite
-                if (url == null)
-                    return@setOnClickListener
-                try {
-                    if (!url.contains("http")) {
-                        url = "http://${url}"
-                    }
-                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                    startActivity(browserIntent)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    Toast.makeText(
-                        applicationContext,
-                        "올바른 인터넷 주소가 아닙니다\n${url}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+            binding.checkWebAddress.checkTodoCategoryContent.text = webSite
+        }
+        binding.checkWebAddress.checkTodoCategoryContent.setOnClickListener {
+            if (webSite == "")
+                return@setOnClickListener
+            try {
+                if (!webSite.contains("http")) {
+                    webSite = "http://${webSite}"
                 }
+                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(webSite))
+                startActivity(browserIntent)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Toast.makeText(
+                    applicationContext,
+                    "올바른 인터넷 주소가 아닙니다\n${webSite}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
         binding.checkPhoneNumber.checkTodoCategoryTitle.text = "전화번호"
-        if (data.attachment.phoneNumber == "")
+        val phoneNumber= data.attachment.phoneNumber?:""
+        if (phoneNumber == "")
             binding.checkPhoneNumber.checkTodoLayout.visibility = View.GONE
         else {
             binding.checkPhoneNumber.checkTodoLayout.visibility = View.VISIBLE
-            binding.checkPhoneNumber.checkTodoCategoryContent.text = data.attachment.phoneNumber
+            binding.checkPhoneNumber.checkTodoCategoryContent.text = phoneNumber
+        }
+        binding.checkPhoneNumber.checkTodoLayout.setOnClickListener {
+            if (phoneNumber != "") {
+                val intent = Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNumber, null))
+                startActivity(intent)
+            }
         }
 
         if (data.attachment.location == "")
