@@ -97,7 +97,7 @@ class AddTodoActivity : AppCompatActivity() {
             }
         if (selectedCategory != null) {
             //find
-            val index = categories.indexOf(selectedCategory)
+            val index = categories.indexOf(selectedCategory!!)
             if (index != -1) {
                 binding.categorySpinner.setSelection(0)
             }
@@ -151,7 +151,20 @@ class AddTodoActivity : AppCompatActivity() {
             googleMap.setOnMapClickListener {
                 val option = MarkerOptions()
                 option.position(it)
-                option.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)) // 나중에 테마 색으로 바꿀 것
+                val category:ArrayList<CategoryData> = db.readCategory()
+                val index = category.indexOfFirst {
+                    it.type == selectedCategory
+                }
+                val color = category[index].textColor
+                var markerColor = BitmapDescriptorFactory.HUE_CYAN
+                if (color == "파랑")
+                    markerColor = BitmapDescriptorFactory.HUE_BLUE
+                else if (color == "노랑")
+                    markerColor = BitmapDescriptorFactory.HUE_YELLOW
+                else if (color == "빨강")
+                    markerColor = BitmapDescriptorFactory.HUE_RED
+                option.icon(BitmapDescriptorFactory.defaultMarker(markerColor)) // 나중에 테마 색으로 바꿀 것
+                googleMap.clear()
                 googleMap.addMarker(option)
                 pos = it
             }
@@ -198,7 +211,11 @@ class AddTodoActivity : AppCompatActivity() {
             data.content = binding.editTextTodo.text.toString()
             data.type = selectedCategory
             data.attachment.webSite = binding.editTextTextWebAddress.text.toString()
-            data.attachment.location = "${pos.latitude} ${pos.longitude}"
+            try {
+                data.attachment.location = "${pos.latitude} ${pos.longitude}"
+            } catch (e: kotlin.UninitializedPropertyAccessException) {
+                data.attachment.location = ""
+            }
             data.attachment.phoneNumber = binding.editTextPhoneNumber.text.toString()
             data.notification.notifyRadius = binding.editTextRadius.text.toString()
 
