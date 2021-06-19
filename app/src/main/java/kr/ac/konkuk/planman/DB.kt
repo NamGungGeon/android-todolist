@@ -13,7 +13,7 @@ class DB(val context: Context) {
         dbHelper = DBHelper(context)
     }
 
-    fun insertMyData(data: MyData2) : MyData2 {
+    fun insertMyData(data: MyData2): MyData2 {
         val db = dbHelper.writableDatabase
         val cv: ContentValues = data.getContentValues()
         data.id = db.insert("data", null, cv)
@@ -34,11 +34,40 @@ class DB(val context: Context) {
         db.close()
     }
 
-    fun readMyData() : ArrayList<MyData2>{
+    fun readMyData(id: Int): MyData2? {
+        var result: MyData2? = null
+        val db = dbHelper.readableDatabase
+        val cursor: Cursor = db.rawQuery("SELECT * FROM data WHERE `id`=?", arrayOf(id.toString()))
+        if (cursor.count == 0) {
+            return null
+        }
+
+        if (cursor.moveToFirst()) {
+            val data = MyData2()
+            data.id = cursor.getLong(cursor.getColumnIndex("id"))
+            data.title = cursor.getString(cursor.getColumnIndex("title"))
+            data.content = cursor.getString(cursor.getColumnIndex("content"))
+            data.type = cursor.getString(cursor.getColumnIndex("type"))
+            data.attachment.webSite = cursor.getString(cursor.getColumnIndex("att_webSite"))
+            data.attachment.phoneNumber = cursor.getString(cursor.getColumnIndex("att_phoneNumber"))
+            data.attachment.location = cursor.getString(cursor.getColumnIndex("att_location"))
+            data.notification.notifyDateTime =
+                cursor.getString(cursor.getColumnIndex("not_notifyDateTime"))
+            data.notification.notifyRadius =
+                cursor.getString(cursor.getColumnIndex("not_notifyRadius"))
+            result = data
+        }
+        db.close()
+        cursor.close()
+
+        return result
+    }
+
+    fun readMyData(): ArrayList<MyData2> {
         val db = dbHelper.readableDatabase
         val cursor: Cursor = db.rawQuery("SELECT * FROM data", null)
-        val dataList:ArrayList<MyData2> = ArrayList()
-        if(cursor.moveToFirst()) {
+        val dataList: ArrayList<MyData2> = ArrayList()
+        if (cursor.moveToFirst()) {
             do {
                 val data = MyData2()
                 data.id = cursor.getLong(cursor.getColumnIndex("id"))
@@ -46,10 +75,13 @@ class DB(val context: Context) {
                 data.content = cursor.getString(cursor.getColumnIndex("content"))
                 data.type = cursor.getString(cursor.getColumnIndex("type"))
                 data.attachment.webSite = cursor.getString(cursor.getColumnIndex("att_webSite"))
-                data.attachment.phoneNumber = cursor.getString(cursor.getColumnIndex("att_phoneNumber"))
+                data.attachment.phoneNumber =
+                    cursor.getString(cursor.getColumnIndex("att_phoneNumber"))
                 data.attachment.location = cursor.getString(cursor.getColumnIndex("att_location"))
-                data.notification.notifyDateTime = cursor.getString(cursor.getColumnIndex("not_notifyDateTime"))
-                data.notification.notifyRadius = cursor.getString(cursor.getColumnIndex("not_notifyRadius"))
+                data.notification.notifyDateTime =
+                    cursor.getString(cursor.getColumnIndex("not_notifyDateTime"))
+                data.notification.notifyRadius =
+                    cursor.getString(cursor.getColumnIndex("not_notifyRadius"))
                 dataList.add(data)
             } while (cursor.moveToNext())
         }
@@ -61,36 +93,36 @@ class DB(val context: Context) {
 
     fun insertCategory(category: CategoryData) {
         val db = dbHelper.writableDatabase
-        val cv:ContentValues = category.getContentValues()
-        db.insert("category", null, cv)
+        val cv: ContentValues = category.getContentValues()
+        category.id = db.insert("category", null, cv)
         db.close()
     }
 
     fun updateCategory(category: CategoryData) {
         val db = dbHelper.writableDatabase
-        val cv:ContentValues = category.getContentValues()
-        db.update("category", cv, "type=?", arrayOf(category.type))
+        val cv: ContentValues = category.getContentValues()
+        db.update("category", cv, "id=?", arrayOf(category.id.toString()))
         db.close()
     }
 
     fun deleteCategory(category: CategoryData) {
         val db = dbHelper.writableDatabase
-        db.delete("category", "type=?", arrayOf(category.type))
+        db.delete("category", "id=?", arrayOf(category.id.toString()))
         db.close()
     }
 
-    fun readCategory() : ArrayList<CategoryData> {
+    fun readCategory(): ArrayList<CategoryData> {
         val db = dbHelper.readableDatabase
         val cursor: Cursor = db.rawQuery("SELECT * FROM category", null)
         val categoryList: ArrayList<CategoryData> = ArrayList()
-        if(cursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
             do {
-                val category = CategoryData(
-                    cursor.getString(cursor.getColumnIndex("type")),
-                    cursor.getString(cursor.getColumnIndex("textSize")),
-                    cursor.getString(cursor.getColumnIndex("textColor")),
-                    cursor.getString(cursor.getColumnIndex("textStyle"))
-                )
+                val category = CategoryData()
+                category.id = cursor.getLong(cursor.getColumnIndex("id"))
+                category.type = cursor.getString(cursor.getColumnIndex("type"))
+                category.textSize = cursor.getString(cursor.getColumnIndex("textSize"))
+                category.textColor = cursor.getString(cursor.getColumnIndex("textColor"))
+                category.textStyle = cursor.getString(cursor.getColumnIndex("textStyle"))
                 categoryList.add(category)
             } while (cursor.moveToNext())
         }

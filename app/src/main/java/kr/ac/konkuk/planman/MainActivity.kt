@@ -1,31 +1,45 @@
 package kr.ac.konkuk.planman
 
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import kr.ac.konkuk.planman.databinding.ActivityMainBinding
 
 
 class MainActivity : AppCompatActivity() {
+
     lateinit var binding: ActivityMainBinding
     val todoListVisualizers: ArrayList<Fragment> = ArrayList()
     lateinit var drawerToggle: ActionBarDrawerToggle
-    var selectedCategory: String? = null
+    private val filterTodoViewModel: FilterTodoViewModel by viewModels()
 
-    //임시 변수
-    val CATEGORY_REQUEST_CODE = 100
+    private lateinit var maptodo: MapTodo
 
     override fun onCreate(savedInstanceState: Bundle?) {
 //        val db = DB(this)
 //        db.resetDB()
+////
+//        val db2 = DB(this)
+//        db2.insertCategory(CategoryData("업무", "보통", "파랑", "보통"))
+//        db2.insertCategory(CategoryData("구매", "보통", "노랑", "보통"))
+//        db2.insertCategory(
+//        CategoryData("약속", "보통", "빨강", "보통"))
+
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -39,9 +53,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initUI() {
+        maptodo= MapTodo(this, filterTodoViewModel)
+
         todoListVisualizers.add(ListTodoFragment())
         todoListVisualizers.add(CalendarTodoFragment())
-        todoListVisualizers.add(MapTodo(this).mapFragment)
+        todoListVisualizers.add(maptodo.mapFragment)
 
         binding.apply {
             todoListPager.adapter = object : FragmentStateAdapter(this@MainActivity) {
@@ -53,13 +69,36 @@ class MainActivity : AppCompatActivity() {
                     return todoListVisualizers[position]
                 }
             }
+            todoListPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    onViewModeChanged(position)
+                    todoListPager.isUserInputEnabled = position != 2
+                }
+            })
             todoListPager.offscreenPageLimit = todoListVisualizers.size
 
             addTodoBtn.setOnClickListener {
-                val intent= Intent(applicationContext, AddTodoActivity::class.java)
+                val intent = Intent(applicationContext, AddTodoActivity::class.java)
                 intent.putExtra("data", MyData2())
+                intent.putExtra("type", filterTodoViewModel.selectedCategory.value)
                 startActivity(intent)
             }
+
+            listViewMode.setOnClickListener {
+                todoListPager.setCurrentItem(0, true)
+            }
+            calendarViewMode.setOnClickListener {
+                todoListPager.setCurrentItem(1, true)
+            }
+            mapViewMode.setOnClickListener {
+                todoListPager.setCurrentItem(2, true)
+            }
+
+            searchTodoInput.addTextChangedListener {
+                filterTodoViewModel.setSearchKeyword(it.toString())
+            }
+            searchTodoInput.visibility= View.GONE
 
 //            //임시 : 실제로는 SettingActivity 나오게끔 바꿀것
 //            settingImg.setOnClickListener {
@@ -71,7 +110,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun propagateUpdateCategory(selectedCategory: String) {
         //propagate to all fragments in viewPager
-        this.selectedCategory = selectedCategory
+        var value: String? = selectedCategory
+        if (selectedCategory == "전체") {
+            value = null
+            supportActionBar?.title = "전체 할 일"
+            Toast.makeText(this, "전체 할 일을 표시합니다", Toast.LENGTH_SHORT).show()
+        } else {
+            supportActionBar?.title = selectedCategory
+            Toast.makeText(this, "${selectedCategory} 카테고리의 할 일을 표시합니다", Toast.LENGTH_SHORT).show()
+        }
+        filterTodoViewModel.setSelectedCategory(value)
     }
 
     private fun initActionBar() {
@@ -101,28 +149,52 @@ class MainActivity : AppCompatActivity() {
             supportActionBar?.apply {
                 setDisplayHomeAsUpEnabled(true)
                 setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24)
+                title = "전체 할 일"
             }
         }
     }
 
     private fun initCategories(categories: ArrayList<String>) {
+        binding.categoryAddBtn.setOnClickListener {
+            val intent = Intent(this@MainActivity, CategoryAddActivity::class.java)
+            startActivity(intent)
+        }
         binding.navView.menu.apply {
             clear()
-            categories.map {
+            val realCategories = ArrayList(categories)
+            realCategories.add(0, "전체")
+            realCategories.map {
                 val categoryName = it
-                val addIcon = layoutInflater.inflate(R.layout.category_add, null, false)
+                val addIcon = layoutInflater.inflate(R.layout.layout_category_add, null, false)
                 addIcon.setOnClickListener {
                     //add
                     val intent = Intent(applicationContext, AddTodoActivity::class.java)
-                    intent.putExtra("category", categoryName)
+                    intent.putExtra("data", MyData2())
+                    intent.putExtra("type", categoryName)
                     startActivity(intent)
                 }
-
-                add(it).setActionView(addIcon).setOnMenuItemClickListener {
+                add(it).setOnMenuItemClickListener {
                     //show only todoLists about selected category
                     propagateUpdateCategory(categoryName)
+                    binding.drawerLayout.close()
                     false
+                }.apply {
+                    if (it != "전체")
+                        this.actionView = addIcon
                 }
+            }
+        }
+    }
+
+    private fun onViewModeChanged(position: Int) {
+        binding.apply {
+            listViewMode.setColorFilter(resources.getColor(R.color.light_gray))
+            calendarViewMode.setColorFilter(resources.getColor(R.color.light_gray))
+            mapViewMode.setColorFilter(resources.getColor(R.color.light_gray))
+            when (position) {
+                0 -> listViewMode.setColorFilter(resources.getColor(R.color.black))
+                1 -> calendarViewMode.setColorFilter(resources.getColor(R.color.black))
+                2 -> mapViewMode.setColorFilter(resources.getColor(R.color.black))
             }
         }
     }
@@ -145,6 +217,19 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
             R.id.search -> {
+                binding.searchTodoInput.apply {
+                    if (visibility == View.GONE) {
+                        visibility = View.VISIBLE
+                        //open soft keyboard
+                        requestFocus()
+                        item.setIcon(R.drawable.ic_baseline_search_off_24)
+                        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+                    } else {
+                        item.setIcon(R.drawable.ic_baseline_search_24)
+                        visibility = View.GONE
+                    }
+                    text.clear()
+                }
             }
         }
         return super.onOptionsItemSelected(item)
@@ -163,15 +248,33 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        initCategories(arrayListOf<String>("업무", "약속", "일정", "구매"))
-    }
+        maptodo.init()
 
+//        initCategories(arrayListOf("업무", "구매", "약속"))
+        initCategories(
+            ArrayList(
+                DB(this).readCategory().map { if (it.type == null) "" else it.type!! }.toList()
+                    .filter { it != "" })
+        )
+    }
+    private var lastBackBtnPressed: Long= 0
     override fun onBackPressed() {
         val isOpen = binding.drawerLayout.isOpen
         if (isOpen) {
             binding.drawerLayout.close()
         } else {
-            super.onBackPressed()
+            if(binding.searchTodoInput.visibility== View.VISIBLE){
+                invalidateOptionsMenu()
+                binding.searchTodoInput.visibility= View.GONE
+                binding.searchTodoInput.text.clear()
+            }else{
+                if(System.currentTimeMillis()- lastBackBtnPressed> 1000){
+                    Toast.makeText(this, "앱을 종료하려면 뒤로가기 버튼을 한 번 더 누르세요", Toast.LENGTH_SHORT).show()
+                    lastBackBtnPressed= System.currentTimeMillis()
+                }else{
+                    super.onBackPressed()
+                }
+            }
         }
     }
 

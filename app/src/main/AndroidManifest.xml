@@ -3,6 +3,7 @@
     package="kr.ac.konkuk.planman">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -14,31 +15,34 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Planman">
+        <activity android:name=".SplashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <service
             android:name=".LocationNotificationService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
         <meta-data
             android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version">
-        </meta-data>
+            android:value="@integer/google_play_services_version"></meta-data>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyC7Vx8BufKEwEAujQXDL2Fy8g9iPawk_3k">
-        </meta-data>
-        <activity android:name=".CheckTodoActivity"/>
-        <activity android:name=".CategoryModifyActivity"></activity>
+            android:value="AIzaSyC7Vx8BufKEwEAujQXDL2Fy8g9iPawk_3k"></meta-data>
+
+        <activity android:name=".CheckTodoActivity" />
+        <activity android:name=".CategoryModifyActivity" />
         <activity android:name=".CategoryAddActivity" />
         <activity android:name=".CategoryListActivity" />
         <activity android:name=".AddTodoActivity" />
         <activity
             android:name=".MainActivity"
             android:theme="@style/Theme.Planman.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <receiver

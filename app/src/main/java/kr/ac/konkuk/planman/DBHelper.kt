@@ -16,7 +16,7 @@ class DBHelper(val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, 
                     "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "title TEXT," +
                     "content TEXT," +
-                    "type TEXT NOT NULL ," +
+                    "type TEXT ," +
                     "att_webSite text," +
                     "att_phoneNumber text," +
                     "att_location text," +
@@ -25,7 +25,8 @@ class DBHelper(val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, 
 
         val createCategory =
             "CREATE TABLE IF NOT EXISTS category (" +
-                    "type TEXT PRIMARY KEY," +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "type TEXT," +
                     "textSize TEXT," +
                     "textColor TEXT," +
                     "textStyle TEXT);"

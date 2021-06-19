@@ -62,12 +62,12 @@ class LocationNotificationService : Service() {
                                     .sendNotification(this@LocationNotificationService, todo)
                             }
                         }
-                        //test
-                        NotificationManager.getInstance()
-                            .sendNotification(
-                                this@LocationNotificationService,
-                                MyData2()
-                            )
+//                        //test
+//                        NotificationManager.getInstance()
+//                            .sendNotification(
+//                                this@LocationNotificationService,
+//                                MyData2()
+//                            )
                     }
                 }
                 Thread.sleep(CHECK_INTERVAL)

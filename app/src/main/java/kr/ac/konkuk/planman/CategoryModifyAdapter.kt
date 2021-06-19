@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 class CategoryModifyAdapter(val items:ArrayList<CategoryData>) : RecyclerView.Adapter<CategoryModifyAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val typeText : TextView = itemView.findViewById(R.id.todoListText)
+        val typeText : TextView = itemView.findViewById(R.id.todoListTextRow)
     }
 
     override fun onCreateViewHolder(
@@ -51,7 +51,7 @@ class CategoryModifyAdapter(val items:ArrayList<CategoryData>) : RecyclerView.Ad
             } else if (items[position].textColor == "노랑") {
                 typeText.setTextColor(Color.parseColor("#F39D19"))
                 typeText.setBackgroundResource(R.drawable.list_edge_appointment)
-            } else {    //검정
+            } else if (items[position].textColor == "검정"){    //검정
                 typeText.setTextColor(Color.BLACK)
                 typeText.setBackgroundResource(R.drawable.list_edge_black)
             }

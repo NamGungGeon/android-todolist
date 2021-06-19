@@ -29,6 +29,7 @@
             tools:text="24" />
 
         <androidx.recyclerview.widget.RecyclerView
+            tools:visibility="gone"
             android:id="@+id/dayTodoListRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -5,9 +5,40 @@
     android:layout_height="match_parent"
     tools:context=".ListTodoFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list_recyclerView"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_margin="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/listTitleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="할 일이 0개 있습니다."
+                android:textColor="@color/black"
+                android:textSize="24dp" />
+            <TextView
+                tools:visibility="visible"
+                android:visibility="gone"
+                android:id="@+id/listSubTitleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="할 일을 추가해보세요"
+                android:textColor="@color/black"
+                android:textSize="16dp" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            tools:listitem="@layout/row"
+            android:id="@+id/list_recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp" />
+    </LinearLayout>
 
 </FrameLayout>
