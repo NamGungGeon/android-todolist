@@ -18,14 +18,16 @@ import java.time.LocalDateTime
 class ListTodoFragment : Fragment() {
     var data: ArrayList<MyData2> = ArrayList()
     var categoryDataList: ArrayList<CategoryData> = ArrayList()
-    var usingCategoryTypeList : ArrayList<String?> = ArrayList()
+    var usingCategoryTypeList: ArrayList<String?> = ArrayList()
 
     lateinit var recyclerView: RecyclerView
     var binding: FragmentListTodoBinding? = null
-    lateinit var adapter : ListAdapter
+    lateinit var adapter: ListAdapter
 
     private val filterTodoViewModel: FilterTodoViewModel by activityViewModels()
     val db = activity?.applicationContext?.let { DB(it) }
+
+    private var imCustom = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,7 +50,7 @@ class ListTodoFragment : Fragment() {
     }
 
     fun init() {
-        Thread{
+        Thread {
             categoryDataList = DB(requireContext()).readCategory()
 
             val selectedCategory = filterTodoViewModel.selectedCategory.value
@@ -62,7 +64,7 @@ class ListTodoFragment : Fragment() {
                         todo.type != null && todo.type!! == selectedCategory
                     else true
             }.toList())
-            activity?.runOnUiThread{
+            activity?.runOnUiThread {
                 initRecyclerView()
                 initTitleText(data.size)
             }
@@ -78,7 +80,17 @@ class ListTodoFragment : Fragment() {
     }
 
     fun initTitleText(length: Int) {
-        binding!!.listTitleText.text = "할 일이 ${length}개 있습니다"
+        binding?.apply {
+            if (filterTodoViewModel.searchKeyword.value == "" && length == 0) {
+                listTitleText.text = "아직 할 일이 없습니다"
+
+                if (!imCustom)
+                    listSubTitleText.visibility = View.VISIBLE
+            } else {
+                listTitleText.text = "할 일이 ${length}개 있습니다"
+                listSubTitleText.visibility = View.GONE
+            }
+        }
     }
 
     private fun initData() {
@@ -93,11 +105,13 @@ class ListTodoFragment : Fragment() {
 
     fun setCustomData(data: ArrayList<MyData2>) {
         this.data = data
-        binding!!.listTitleText.visibility= View.GONE
+        binding!!.listTitleText.visibility = View.GONE
+        binding!!.listSubTitleText.visibility = View.GONE
+        imCustom = true
         initRecyclerView()
     }
 
-    fun isUsedCategoryData(categoryData: CategoryData) : Boolean {
+    fun isUsedCategoryData(categoryData: CategoryData): Boolean {
         for (i in usingCategoryTypeList) {
             if (i == categoryData.type) {
                 return true
@@ -116,7 +130,10 @@ class ListTodoFragment : Fragment() {
         }
     }
 
-    fun updateExistingCategoryData(categoryData: CategoryData, notModifiedCategoryData: CategoryData) {
+    fun updateExistingCategoryData(
+        categoryData: CategoryData,
+        notModifiedCategoryData: CategoryData
+    ) {
         data = db!!.readMyData()
 
         for (i in data) {

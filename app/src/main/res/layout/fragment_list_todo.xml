@@ -9,16 +9,29 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/listTitleText"
+        <LinearLayout
+            android:layout_margin="15dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:textStyle="bold"
-            android:text="할 일이 0개 있습니다."
-            android:textColor="@color/black"
-            android:textSize="24dp" />
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/listTitleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="할 일이 0개 있습니다."
+                android:textColor="@color/black"
+                android:textSize="24dp" />
+            <TextView
+                tools:visibility="visible"
+                android:visibility="gone"
+                android:id="@+id/listSubTitleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="할 일을 추가해보세요"
+                android:textColor="@color/black"
+                android:textSize="16dp" />
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             tools:listitem="@layout/row"

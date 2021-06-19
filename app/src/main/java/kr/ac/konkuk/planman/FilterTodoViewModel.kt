@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 
 class FilterTodoViewModel: ViewModel() {
     val selectedCategory= MutableLiveData<String?>()
-    val searchKeyword= MutableLiveData<String?>("")
+    val searchKeyword= MutableLiveData<String>("")
 
     fun setSelectedCategory(category: String?){
         selectedCategory.value= category
