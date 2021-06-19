@@ -28,6 +28,7 @@ import java.util.*
 class AddTodoActivity : AppCompatActivity() {
     lateinit var binding: ActivityAddTodoBinding
     lateinit var data: MyData2
+    private var originData: MyData2? = null
     lateinit var googleMap: GoogleMap
     private val seoul = LatLng(37.5547, 126.9706)
     private var pos: LatLng? = null
@@ -69,6 +70,10 @@ class AddTodoActivity : AppCompatActivity() {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun init() {
+        if(data.id.toInt()!= -1){
+            binding.submitButton.setText("할 일 수정")
+        }
+
         val types = db.readCategory().map {
             it.type
         }.toList()
@@ -160,7 +165,7 @@ class AddTodoActivity : AppCompatActivity() {
             val category: ArrayList<CategoryData> = db.readCategory()
             if (data.id.toInt() != -1) {
                 if (data.attachment.location != null) {
-                    try{
+                    try {
                         val loc = data.attachment.location!!.split(" ")
                         googleMap.moveCamera(
                             CameraUpdateFactory.newLatLngZoom(
@@ -191,7 +196,7 @@ class AddTodoActivity : AppCompatActivity() {
                         option.icon(BitmapDescriptorFactory.defaultMarker(markerColor)) // 나중에 테마 색으로 바꿀 것
                         googleMap.clear()
                         googleMap.addMarker(option)
-                    }catch (e: Exception){
+                    } catch (e: Exception) {
                         e.printStackTrace()
                     }
                 }
@@ -284,7 +289,12 @@ class AddTodoActivity : AppCompatActivity() {
             data.notification.notifyRadius = binding.editTextRadius.text.toString()
 
             val db = DB(this)
-            db.insertMyData(data)
+            //remove old data
+            if(data.id.toInt()== -1){
+                db.insertMyData(data)
+            }else{
+                db.updateMyData(data)
+            }
 
             //시간 예약
             timeNotificationManager = TimeAlarmManager()
@@ -298,6 +308,7 @@ class AddTodoActivity : AppCompatActivity() {
 //                    , pendingIntent)
             }
 
+
             finish()
             Toast.makeText(this, "할일이 추가되었습니다", Toast.LENGTH_LONG).show()
         }
@@ -308,7 +319,5 @@ class AddTodoActivity : AppCompatActivity() {
         binding.editTextTodo.setText(data.content)
         binding.editTextTextWebAddress.setText(data.attachment.webSite)
         binding.editTextPhoneNumber.setText(data.attachment.phoneNumber)
-        val db = DB(this)
-        db.deleteMyData(data)
     }
 }
