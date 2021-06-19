@@ -256,7 +256,7 @@ class MainActivity : AppCompatActivity() {
                     .filter { it != "" })
         )
     }
-
+    private var lastBackBtnPressed: Long= 0
     override fun onBackPressed() {
         val isOpen = binding.drawerLayout.isOpen
         if (isOpen) {
@@ -267,7 +267,12 @@ class MainActivity : AppCompatActivity() {
                 binding.searchTodoInput.visibility= View.GONE
                 binding.searchTodoInput.text.clear()
             }else{
-                super.onBackPressed()
+                if(System.currentTimeMillis()- lastBackBtnPressed> 1000){
+                    Toast.makeText(this, "앱을 종료하려면 뒤로가기 버튼을 한 번 더 누르세요", Toast.LENGTH_SHORT).show()
+                    lastBackBtnPressed= System.currentTimeMillis()
+                }else{
+                    super.onBackPressed()
+                }
             }
         }
     }
