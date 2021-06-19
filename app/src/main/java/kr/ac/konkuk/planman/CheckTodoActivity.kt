@@ -1,10 +1,13 @@
 package kr.ac.konkuk.planman
 
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -23,6 +26,7 @@ class CheckTodoActivity : AppCompatActivity() {
     lateinit var data: MyData2
     lateinit var googleMap: GoogleMap
 
+    lateinit var category: ArrayList<CategoryData>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +34,9 @@ class CheckTodoActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         data = intent.getSerializableExtra("data") as MyData2
+        category = DB(this).readCategory()
+        if (data.type != null)
+            updateActionBarColorWithType()
         init()
     }
 
@@ -40,7 +47,7 @@ class CheckTodoActivity : AppCompatActivity() {
         if (string != null)
             layout.checkTodoCategoryContent.text = string
         else
-            layout.checkTodoLayout.visibility= View.GONE
+            layout.checkTodoLayout.visibility = View.GONE
     }
 
     private fun init() {
@@ -67,40 +74,44 @@ class CheckTodoActivity : AppCompatActivity() {
         binding.checkWebAddress.checkTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_find_in_page_24)
         binding.checkWebAddress.checkTodoCategoryTitle.text = "웹사이트"
         if (data.attachment.webSite == "")
-            binding.checkWebAddress.checkTodoLayout.visibility= View.GONE
-        else{
-            binding.checkWebAddress.checkTodoLayout.visibility= View.VISIBLE
+            binding.checkWebAddress.checkTodoLayout.visibility = View.GONE
+        else {
+            binding.checkWebAddress.checkTodoLayout.visibility = View.VISIBLE
             binding.checkWebAddress.checkTodoCategoryContent.text = data.attachment.webSite
             binding.checkWebAddress.checkTodoCategoryContent.setOnClickListener {
-                var url= data.attachment.webSite
-                if(url == null)
+                var url = data.attachment.webSite
+                if (url == null)
                     return@setOnClickListener
-                try{
-                    if(!url.contains("http")){
-                        url= "http://${url}"
+                try {
+                    if (!url.contains("http")) {
+                        url = "http://${url}"
                     }
                     val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                     startActivity(browserIntent)
-                }catch (e: Exception){
+                } catch (e: Exception) {
                     e.printStackTrace()
-                    Toast.makeText(applicationContext, "올바른 인터넷 주소가 아닙니다\n${url}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        applicationContext,
+                        "올바른 인터넷 주소가 아닙니다\n${url}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
 
         binding.checkPhoneNumber.checkTodoCategoryTitle.text = "전화번호"
         if (data.attachment.phoneNumber == "")
-            binding.checkPhoneNumber.checkTodoLayout.visibility= View.GONE
+            binding.checkPhoneNumber.checkTodoLayout.visibility = View.GONE
         else {
-            binding.checkPhoneNumber.checkTodoLayout.visibility= View.VISIBLE
+            binding.checkPhoneNumber.checkTodoLayout.visibility = View.VISIBLE
             binding.checkPhoneNumber.checkTodoCategoryContent.text = data.attachment.phoneNumber
         }
 
         if (data.attachment.location == "")
-            binding.checkTodoMap.visibility= View.GONE
+            binding.checkTodoMap.visibility = View.GONE
         else {
-            if (data.attachment.location == null){
-                binding.checkTodoMap.visibility= View.GONE
+            if (data.attachment.location == null) {
+                binding.checkTodoMap.visibility = View.GONE
                 return
             }
 
@@ -114,10 +125,10 @@ class CheckTodoActivity : AppCompatActivity() {
             val mapFragment =
                 supportFragmentManager.findFragmentById(R.id.map_frag2) as SupportMapFragment
             if (latLng == null)
-                binding.checkTodoMap.visibility= View.GONE
+                binding.checkTodoMap.visibility = View.GONE
             else
                 mapFragment.getMapAsync {
-                    binding.checkTodoMap.visibility= View.VISIBLE
+                    binding.checkTodoMap.visibility = View.VISIBLE
 
                     googleMap = it
                     googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11.0f))
@@ -127,12 +138,11 @@ class CheckTodoActivity : AppCompatActivity() {
                     val option = MarkerOptions()
                     option.position(latLng)
                     val db = DB(this)
-                    val category: ArrayList<CategoryData> = db.readCategory()
                     val index = category.indexOfFirst {
                         it.type == data.type
                     }
                     var markerColor = BitmapDescriptorFactory.HUE_CYAN
-                    if(index!= -1){
+                    if (index != -1) {
                         val color = category[index].textColor
                         if (color == "파랑")
                             markerColor = BitmapDescriptorFactory.HUE_BLUE
@@ -149,9 +159,9 @@ class CheckTodoActivity : AppCompatActivity() {
         binding.checkDateTime.checkTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_edit_calendar_24)
         binding.checkDateTime.checkTodoCategoryTitle.text = "날짜/시간"
         if (data.notification.notifyDateTime == null)
-            binding.checkDateTime.checkTodoLayout.visibility= View.GONE
+            binding.checkDateTime.checkTodoLayout.visibility = View.GONE
         else {
-            binding.checkDateTime.checkTodoLayout.visibility= View.VISIBLE
+            binding.checkDateTime.checkTodoLayout.visibility = View.VISIBLE
             val date = data.notification.notifyDateTime!!.split("-")
             val dateTime = LocalDateTime.of(
                 date[0].toInt(),
@@ -167,9 +177,9 @@ class CheckTodoActivity : AppCompatActivity() {
         binding.checkRadius.checkTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_place_24)
         binding.checkRadius.checkTodoCategoryTitle.text = "거리 반경"
         if (data.notification.notifyRadius == "")
-            binding.checkRadius.checkTodoLayout.visibility= View.GONE
+            binding.checkRadius.checkTodoLayout.visibility = View.GONE
         else {
-            binding.checkRadius.checkTodoLayout.visibility= View.VISIBLE
+            binding.checkRadius.checkTodoLayout.visibility = View.VISIBLE
             binding.checkRadius.checkTodoCategoryContent.text = data.notification.notifyRadius
         }
 
@@ -178,7 +188,7 @@ class CheckTodoActivity : AppCompatActivity() {
             intent.putExtra("data", data)
             startActivityForResult(intent, 1)
         }
-        binding.removeButton.setOnClickListener{
+        binding.removeButton.setOnClickListener {
             AlertDialog.Builder(this@CheckTodoActivity)
                 .setTitle("할 일 삭제")
                 .setMessage("이 할 일을 삭제합니다\n계속하시겠습니까?")
@@ -194,11 +204,30 @@ class CheckTodoActivity : AppCompatActivity() {
         }
     }
 
+    @ColorInt
+    private fun useCategoryColor(): Int {
+        return resources.getColor(
+            CategoryData.Color.useColor(
+                category.find {
+                    it.type == data.type
+                }?.textColor
+            )
+        )
+    }
+
+    private fun updateActionBarColorWithType() {
+        if (data.type != null)
+            supportActionBar?.setBackgroundDrawable(
+                ColorDrawable(useCategoryColor())
+            )
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        val updatedData= DB(this).readMyData(this.data.id.toInt())
-        if(updatedData!= null){
-            this.data= updatedData
+        val updatedData = DB(this).readMyData(this.data.id.toInt())
+        if (updatedData != null) {
+            this.data = updatedData
+            updateActionBarColorWithType()
             init()
         }
     }
