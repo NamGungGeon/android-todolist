@@ -42,13 +42,13 @@ class AddTodoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAddTodoBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        supportActionBar?.title= "할 일 추가"
+        supportActionBar?.title = "할 일 추가"
 
 
         selectedType = intent.getStringExtra("type")
 
         data = intent.getSerializableExtra("data") as MyData2
-        db= DB(this)
+        db = DB(this)
         init()
         if (data.id.toInt() != -1)
             initData()
@@ -126,16 +126,20 @@ class AddTodoActivity : AppCompatActivity() {
             val transImage = binding.transparentImage
             transImage.setOnTouchListener { _, event ->
                 var action = event.action
+                Toast.makeText(applicationContext, "touch", Toast.LENGTH_SHORT).show()
                 when (action) {
                     MotionEvent.ACTION_DOWN -> {
+                        binding.root.setScrollingEnabled(false)
                         binding.root.requestDisallowInterceptTouchEvent(true)
                         false
                     }
                     MotionEvent.ACTION_UP -> {
+                        binding.root.setScrollingEnabled(true)
                         binding.root.requestDisallowInterceptTouchEvent(true)
                         false
                     }
                     MotionEvent.ACTION_MOVE -> {
+                        binding.root.setScrollingEnabled(false)
                         binding.root.requestDisallowInterceptTouchEvent(true)
                         false
                     }
@@ -163,6 +167,7 @@ class AddTodoActivity : AppCompatActivity() {
                 googleMap.setMinZoomPreference(8.0f)
                 googleMap.setMaxZoomPreference(16.0f)
                 googleMap.setOnMapClickListener {
+                    Toast.makeText(applicationContext, "touch", Toast.LENGTH_SHORT).show()
                     val option = MarkerOptions()
                     option.position(it)
                     val category: ArrayList<CategoryData> = db.readCategory()

@@ -7,19 +7,17 @@ import androidx.lifecycle.LifecycleObserver
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptor
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import java.lang.NumberFormatException
 
-class MapTodo(val context: Context) {
+class MapTodo(val context: Context, val filterTodoViewModel: FilterTodoViewModel) {
     var mapFragment = SupportMapFragment.newInstance()
     lateinit var googleMap: GoogleMap
     var data: ArrayList<MyData2> = ArrayList()
 
     private val seoul = LatLng(37.5547, 126.9706)
-    lateinit var category:ArrayList<CategoryData>
+    var category: ArrayList<CategoryData>
+    private val markers = ArrayList<Marker>()
 
     init {
         val db = DB(context)
@@ -27,20 +25,37 @@ class MapTodo(val context: Context) {
 
         category = db.readCategory()
     }
-    fun init(){
+
+    fun init() {
         mapFragment.getMapAsync { it ->
             googleMap = it
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(seoul, 11.0f))
             googleMap.setMinZoomPreference(8.0f)
             googleMap.setMaxZoomPreference(16.0f)
             googleMap.setOnMarkerClickListener {
-                val intent= Intent(context, CheckTodoActivity::class.java)
+                val intent = Intent(context, CheckTodoActivity::class.java)
                 intent.putExtra("data", it.tag as MyData2)
                 context.startActivity(intent)
                 true
             }
-            for(d in data) {
-                if(d.attachment.location!= null && d.attachment.location != "") {
+            markers.map { marker ->
+                marker.remove()
+            }
+            markers.clear()
+
+            val searchKeyword = filterTodoViewModel.searchKeyword.value
+            val selectedCategory = filterTodoViewModel.selectedCategory.value
+            val filteredCategory= ArrayList(data.filter { todo ->
+                if (searchKeyword?.isNotEmpty() == true)
+                    (todo.title != null && todo.title!!.contains(searchKeyword.toString()))
+                            || (todo.content != null && todo.content!!.contains(searchKeyword.toString()))
+                else
+                    if (selectedCategory != null)
+                        todo.type != null && todo.type!! == selectedCategory
+                    else true
+            }.toList())
+            for (d in filteredCategory) {
+                if (d.attachment.location != null && d.attachment.location != "") {
                     val option = MarkerOptions()
                     val loc = d.attachment.location!!.split(" ")
                     val index = category.indexOfFirst {
@@ -55,9 +70,9 @@ class MapTodo(val context: Context) {
                     else if (color == "빨강")
                         markerColor = BitmapDescriptorFactory.HUE_RED
 
-                    try{
+                    try {
                         option.position(LatLng(loc[0].toDouble(), loc[1].toDouble()))
-                    }catch (e: NumberFormatException){
+                    } catch (e: NumberFormatException) {
                         e.printStackTrace()
                         continue
                     }
@@ -66,6 +81,7 @@ class MapTodo(val context: Context) {
                     val marker = googleMap.addMarker(option)
                     //marker.showInfoWindow()
                     marker.tag = d
+                    markers.add(marker)
                 }
             }
         }

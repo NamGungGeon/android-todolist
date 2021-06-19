@@ -1,28 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<kr.ac.konkuk.planman.LockableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollView"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="20dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:padding="20dp"
         tools:context=".AddTodoActivity">
+
         <LinearLayout
-            android:layout_marginBottom="16dp"
-            android:layout_gravity="right"
-            android:orientation="vertical"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginBottom="16dp"
+            android:orientation="vertical">
+
             <Spinner
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                tools:listitem="@layout/support_simple_spinner_dropdown_item"
                 android:id="@+id/type_spinner"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                tools:listitem="@layout/support_simple_spinner_dropdown_item" />
         </LinearLayout>
 
         <TextView
@@ -37,13 +41,13 @@
             android:id="@+id/editTextTodoTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/textinputborder"
-            android:padding="10dp"
-            android:layout_marginTop="5dp"
             android:layout_marginLeft="15dp"
+            android:layout_marginTop="5dp"
             android:layout_marginRight="15dp"
+            android:background="@drawable/textinputborder"
+            android:hint="제목을 입력해주세요."
             android:inputType="textUri"
-            android:hint="제목을 입력해주세요." />
+            android:padding="10dp" />
 
         <TextView
             android:id="@+id/todoListText"
@@ -58,13 +62,13 @@
             android:id="@+id/editTextTodo"
             android:layout_width="match_parent"
             android:layout_height="85dp"
+            android:layout_margin="10dp"
             android:background="@drawable/textinputborder"
             android:gravity="top|left"
+            android:hint="할 일을 작성해주세요."
             android:inputType="textMultiLine"
             android:maxLines="10"
-            android:layout_margin = "10dp"
-            android:padding="10dp"
-            android:hint="할 일을 작성해주세요." />
+            android:padding="10dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -75,73 +79,76 @@
             android:textStyle="bold" />
 
         <include
-            layout = "@layout/add_todo_categorybox"
             android:id="@+id/dropDownWebAddress"
+            layout="@layout/add_todo_categorybox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"/>
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="10dp" />
 
         <EditText
             android:id="@+id/editTextTextWebAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/textinputborder"
-            android:padding="10dp"
-            android:layout_marginTop="5dp"
             android:layout_marginLeft="15dp"
+            android:layout_marginTop="5dp"
             android:layout_marginRight="15dp"
+            android:background="@drawable/textinputborder"
+            android:hint="웹 주소를 입력해주세요."
             android:inputType="textUri"
-            android:hint="웹 주소를 입력해주세요." />
+            android:padding="10dp" />
 
         <include
-            layout = "@layout/add_todo_categorybox"
             android:id="@+id/dropDownPhoneNumber"
+            layout="@layout/add_todo_categorybox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"/>
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="10dp" />
 
         <EditText
             android:id="@+id/editTextPhoneNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/textinputborder"
-            android:padding="10dp"
-            android:layout_marginTop="5dp"
             android:layout_marginLeft="15dp"
+            android:layout_marginTop="5dp"
             android:layout_marginRight="15dp"
+            android:background="@drawable/textinputborder"
+            android:hint="전화번호를 입력해주세요."
             android:inputType="phone"
-            android:hint="전화번호를 입력해주세요." />
+            android:padding="10dp" />
 
         <include
-            layout = "@layout/add_todo_categorybox"
             android:id="@+id/dropDownLocation"
+            layout="@layout/add_todo_categorybox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
             android:layout_marginRight="10dp" />
 
         <RelativeLayout
             android:id="@+id/map"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:layout_marginTop="5dp"
             android:layout_marginLeft="15dp"
+            android:layout_marginTop="5dp"
             android:layout_marginRight="15dp">
-        <fragment
-            android:id="@+id/map_frag"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:name="com.google.android.gms.maps.SupportMapFragment"/>
-        <ImageView
-            android:id="@+id/transparent_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@android:color/transparent"/>
+
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/transparent_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@android:color/transparent" />
+            <fragment
+                android:id="@+id/map_frag"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
         </RelativeLayout>
 
         <TextView
@@ -153,60 +160,60 @@
             android:textStyle="bold" />
 
         <include
-            layout = "@layout/add_todo_categorybox"
             android:id="@+id/dropDownSetDate"
+            layout="@layout/add_todo_categorybox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"/>
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="10dp" />
 
         <CalendarView
             android:id="@+id/calendarView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:layout_marginLeft="15dp"
+            android:layout_marginTop="5dp"
             android:layout_marginRight="15dp" />
 
         <TextView
             android:id="@+id/textConfirmTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="time"
-            android:textStyle="bold"
-            android:layout_marginTop="5dp"
             android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"/>
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="15dp"
+            android:text="time"
+            android:textStyle="bold" />
 
         <include
-            layout = "@layout/add_todo_categorybox"
             android:id="@+id/dropDownSetLocation"
+            layout="@layout/add_todo_categorybox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
             android:layout_marginRight="10dp" />
 
         <EditText
             android:id="@+id/editTextRadius"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/textinputborder"
-            android:padding="10dp"
-            android:layout_marginTop="5dp"
             android:layout_marginLeft="15dp"
+            android:layout_marginTop="5dp"
             android:layout_marginRight="15dp"
+            android:background="@drawable/textinputborder"
+            android:hint="알림 반경을 입력해주세요(임시)"
             android:inputType="phone"
-            android:hint="알림 반경을 입력해주세요(임시)" />
+            android:padding="10dp" />
 
         <Button
             android:id="@+id/submitButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
+            android:backgroundTint="@color/light_blue"
             android:text="할 일 완료"
-            android:textStyle="bold"
-            android:backgroundTint="@color/light_blue"/>
+            android:textStyle="bold" />
     </LinearLayout>
-</ScrollView>
+</kr.ac.konkuk.planman.LockableScrollView>

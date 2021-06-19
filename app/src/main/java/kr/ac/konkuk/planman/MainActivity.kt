@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initUI() {
-        maptodo= MapTodo(this)
+        maptodo= MapTodo(this, filterTodoViewModel)
 
         todoListVisualizers.add(ListTodoFragment())
         todoListVisualizers.add(CalendarTodoFragment())
