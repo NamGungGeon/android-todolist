@@ -81,6 +81,7 @@ class MainActivity : AppCompatActivity() {
             addTodoBtn.setOnClickListener {
                 val intent = Intent(applicationContext, AddTodoActivity::class.java)
                 intent.putExtra("data", MyData2())
+                intent.putExtra("type", filterTodoViewModel.selectedCategory.value)
                 startActivity(intent)
             }
 
