@@ -1,6 +1,8 @@
 package kr.ac.konkuk.planman
 
 import android.content.ContentValues
+import android.graphics.Typeface
+import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import java.io.Serializable
@@ -25,6 +27,22 @@ class CategoryData : Serializable {
                     "노랑" -> yellow
                     "파랑" -> blue
                     else -> black
+                }
+            }
+        }
+    }
+    class TextStyle{
+        companion object{
+            val italic= Typeface.ITALIC
+            val normal= Typeface.NORMAL
+            val bold= Typeface.BOLD
+
+            fun useStyle(styleString: String?): Int{
+                return when(styleString){
+                    "진하게"-> bold
+                    "보통"-> normal
+                    "이탤릭체"-> italic
+                    else-> normal
                 }
             }
         }

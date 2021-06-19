@@ -1,5 +1,6 @@
 package kr.ac.konkuk.planman
 
+import android.graphics.Typeface
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -186,6 +187,7 @@ class CalendarTodoFragment : Fragment() {
                                                                 CategoryData.Color.useColor(category.textColor)
                                                             )
                                                         )
+                                                        setTypeface(Typeface.DEFAULT, CategoryData.TextStyle.useStyle(category.textStyle))
                                                     } else {
                                                         setBackgroundColor(resources.getColor(R.color.black))
                                                     }
@@ -298,6 +300,7 @@ class CalendarTodoFragment : Fragment() {
             } else {
                 binding.selectedDayText.text =
                     "${date.year}년 ${date.monthValue}월의 할 일"
+                binding.selectedDayText.text
                 binding.selectedDayText.visibility = View.VISIBLE
                 binding.calendarLayoutScrollView.fullScroll(View.FOCUS_UP)
             }
