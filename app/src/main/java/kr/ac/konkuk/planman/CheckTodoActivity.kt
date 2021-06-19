@@ -48,6 +48,22 @@ class CheckTodoActivity : AppCompatActivity() {
         binding.checkTodoContent.text = data.title
         supportActionBar?.title = data.title
 
+
+        binding.checkTodoType.apply {
+            if (data.type == null) {
+                checkTodoLayout.visibility = View.GONE
+            } else {
+                checkTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_menu_24)
+                checkTodoCategoryIcon.setColorFilter(useCategoryColor())
+                checkTodoLayout.visibility = View.VISIBLE
+                checkTodoCategoryTitle.also{tv->
+                    tv.setText(data.type)
+                    tv.setTextColor(useCategoryColor())
+                }
+                checkTodoCategoryContent.visibility= View.GONE
+            }
+        }
+
         binding.checkWebAddress.checkTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_find_in_page_24)
         binding.checkWebAddress.checkTodoCategoryTitle.text = "웹사이트"
         if (data.attachment.webSite == "")

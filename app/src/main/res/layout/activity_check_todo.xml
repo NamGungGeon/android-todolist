@@ -15,6 +15,11 @@
             android:orientation="vertical"
             android:padding="20dp"
             tools:context=".CheckTodoActivity">
+            <include
+                android:id="@+id/checkTodoType"
+                layout="@layout/check_todo_category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
             <TextView
                 android:id="@+id/title"
@@ -40,9 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="test"
-                android:layout_marginLeft="10dp"
                 android:layout_marginTop="5dp"
-                android:layout_marginRight="10dp"
                 android:background="@drawable/check_category_box"
                 android:lines="5"
                 android:padding="16dp" />
