@@ -1,15 +1,20 @@
 package kr.ac.konkuk.planman
 
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
@@ -21,10 +26,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     val todoListVisualizers: ArrayList<Fragment> = ArrayList()
     lateinit var drawerToggle: ActionBarDrawerToggle
-    private val selectedCategoryViewModel: SelectedCategoryViewModel by viewModels()
+    private val filterTodoViewModel: FilterTodoViewModel by viewModels()
 
-    //use viewModel holding selectedCategory
-    var selectedCategory: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
 //        val db = DB(this)
@@ -77,19 +80,20 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
 
-
-
-            binding.apply {
-                listViewMode.setOnClickListener {
-                    todoListPager.setCurrentItem(0, true)
-                }
-                calendarViewMode.setOnClickListener {
-                    todoListPager.setCurrentItem(1, true)
-                }
-                mapViewMode.setOnClickListener {
-                    todoListPager.setCurrentItem(2, true)
-                }
+            listViewMode.setOnClickListener {
+                todoListPager.setCurrentItem(0, true)
             }
+            calendarViewMode.setOnClickListener {
+                todoListPager.setCurrentItem(1, true)
+            }
+            mapViewMode.setOnClickListener {
+                todoListPager.setCurrentItem(2, true)
+            }
+
+            searchTodoInput.addTextChangedListener {
+                filterTodoViewModel.setSearchKeyword(it.toString())
+            }
+            searchTodoInput.visibility= View.GONE
 
 //            //임시 : 실제로는 SettingActivity 나오게끔 바꿀것
 //            settingImg.setOnClickListener {
@@ -110,7 +114,7 @@ class MainActivity : AppCompatActivity() {
             supportActionBar?.title = selectedCategory
             Toast.makeText(this, "${selectedCategory} 카테고리의 할 일을 표시합니다", Toast.LENGTH_SHORT).show()
         }
-        selectedCategoryViewModel.setSelectedCategory(value)
+        filterTodoViewModel.setSelectedCategory(value)
     }
 
     private fun initActionBar() {
@@ -208,6 +212,17 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
             R.id.search -> {
+                binding.searchTodoInput.apply {
+                    if (visibility == View.GONE) {
+                        visibility = View.VISIBLE
+                        //open soft keyboard
+                        requestFocus()
+                        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+                    } else {
+                        visibility = View.GONE
+                    }
+                    text.clear()
+                }
             }
         }
         return super.onOptionsItemSelected(item)
@@ -239,7 +254,12 @@ class MainActivity : AppCompatActivity() {
         if (isOpen) {
             binding.drawerLayout.close()
         } else {
-            super.onBackPressed()
+            if(binding.searchTodoInput.visibility== View.VISIBLE){
+                binding.searchTodoInput.visibility= View.GONE
+                binding.searchTodoInput.text.clear()
+            }else{
+                super.onBackPressed()
+            }
         }
     }
 

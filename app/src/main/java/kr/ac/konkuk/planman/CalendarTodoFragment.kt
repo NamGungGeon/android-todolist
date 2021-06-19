@@ -42,7 +42,7 @@ class CalendarTodoFragment : Fragment() {
     private var currentCalendarLocalDate: LocalDate = LocalDate.now()
     private var categoryList: ArrayList<CategoryData> = ArrayList()
     private var selectedLocalDate: LocalDate? = null
-    private val selectedCategoryViewModel: SelectedCategoryViewModel by activityViewModels()
+    private val filterTodoViewModel: FilterTodoViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,7 +58,10 @@ class CalendarTodoFragment : Fragment() {
         binding = FragmentCalendarTodoBinding.bind(view)
 
         init()
-        selectedCategoryViewModel.selectedCategory.observe(viewLifecycleOwner) {
+        filterTodoViewModel.selectedCategory.observe(viewLifecycleOwner) {
+            init()
+        }
+        filterTodoViewModel.searchKeyword.observe(viewLifecycleOwner) {
             init()
         }
     }
@@ -66,9 +69,16 @@ class CalendarTodoFragment : Fragment() {
     private fun init() {
         categoryList = DB(requireContext()).readCategory()
 
-        val selectedCategory = selectedCategoryViewModel.selectedCategory
+        val selectedCategory = filterTodoViewModel.selectedCategory.value
+        val searchKeyword = filterTodoViewModel.searchKeyword.value
         todoList = ArrayList(DB(requireContext()).readMyData().filter { todo ->
-            if (selectedCategory.value != null) todo.type != null && todo.type!! == selectedCategory.value else true
+            if (searchKeyword?.isNotEmpty() == true)
+                (todo.title != null && todo.title!!.contains(searchKeyword.toString()))
+                        || (todo.content != null && todo.content!!.contains(searchKeyword.toString()))
+            else
+                if (selectedCategory != null)
+                    todo.type != null && todo.type!! == selectedCategory
+                else true
         }.toList())
         initCalendar()
     }
@@ -187,7 +197,10 @@ class CalendarTodoFragment : Fragment() {
                                                                 CategoryData.Color.useColor(category.textColor)
                                                             )
                                                         )
-                                                        setTypeface(Typeface.DEFAULT, CategoryData.TextStyle.useStyle(category.textStyle))
+                                                        setTypeface(
+                                                            Typeface.DEFAULT,
+                                                            CategoryData.TextStyle.useStyle(category.textStyle)
+                                                        )
                                                     } else {
                                                         setBackgroundColor(resources.getColor(R.color.black))
                                                     }
@@ -302,7 +315,7 @@ class CalendarTodoFragment : Fragment() {
                     "${date.year}년 ${date.monthValue}월의 할 일"
                 binding.selectedDayText.text
                 binding.selectedDayText.visibility = View.VISIBLE
-                binding.calendarLayoutScrollView.fullScroll(View.FOCUS_UP)
+//                binding.calendarLayoutScrollView.fullScroll(View.FOCUS_UP)
             }
         }
     }
