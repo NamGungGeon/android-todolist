@@ -26,7 +26,6 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class AddTodoActivity : AppCompatActivity() {
-
     lateinit var binding: ActivityAddTodoBinding
     lateinit var data: MyData2
     lateinit var googleMap: GoogleMap
@@ -226,10 +225,7 @@ class AddTodoActivity : AppCompatActivity() {
 //                    , pendingIntent)
             }
 
-
-            val intent = Intent(this, MainActivity::class.java)
-//            intent.putExtra("data", data) // 나중에 FileIO나 DB로 변경
-            startActivity(intent)
+            finish()
             Toast.makeText(this, "할일이 추가되었습니다", Toast.LENGTH_LONG).show()
         }
     }
