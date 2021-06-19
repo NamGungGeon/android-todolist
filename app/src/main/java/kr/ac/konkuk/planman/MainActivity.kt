@@ -73,7 +73,6 @@ class MainActivity : AppCompatActivity() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     onViewModeChanged(position)
-                    
                     todoListPager.isUserInputEnabled = position != 2
                 }
             })
@@ -222,8 +221,10 @@ class MainActivity : AppCompatActivity() {
                         visibility = View.VISIBLE
                         //open soft keyboard
                         requestFocus()
+                        item.setIcon(R.drawable.ic_baseline_search_off_24)
                         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                     } else {
+                        item.setIcon(R.drawable.ic_baseline_search_24)
                         visibility = View.GONE
                     }
                     text.clear()
@@ -262,6 +263,7 @@ class MainActivity : AppCompatActivity() {
             binding.drawerLayout.close()
         } else {
             if(binding.searchTodoInput.visibility== View.VISIBLE){
+                invalidateOptionsMenu()
                 binding.searchTodoInput.visibility= View.GONE
                 binding.searchTodoInput.text.clear()
             }else{
