@@ -43,6 +43,7 @@ class AddTodoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAddTodoBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        supportActionBar?.title= "할 일 추가"
 
 
         selectedType = intent.getStringExtra("type")

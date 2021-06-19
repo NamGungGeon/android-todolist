@@ -31,6 +31,7 @@ class CheckTodoActivity : AppCompatActivity() {
 
     private fun init() {
         Toast.makeText(this, "check", Toast.LENGTH_LONG).show()
+        supportActionBar?.title= data.title
         initText(binding.title, data.title)
         initText(binding.checkTodoContent, data.content)
 

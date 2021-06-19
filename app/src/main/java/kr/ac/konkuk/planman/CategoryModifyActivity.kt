@@ -36,8 +36,8 @@ class CategoryModifyActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityCategoryModifyBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        supportActionBar?.hide()
         getData = intent.getSerializableExtra("category") as CategoryData
+        supportActionBar?.title= getData.type
         getDataNotModified = CategoryData(getData.id, getData.type, getData.textSize, getData.textColor, getData.textStyle)
         initSpinner()
         initTitle()

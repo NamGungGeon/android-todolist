@@ -36,7 +36,8 @@ class CategoryAddActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityCategoryAddBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        supportActionBar?.hide()
+        supportActionBar?.title= "카테고리 추가"
+
         initSpinner()
         initPreview()
         createCategory()

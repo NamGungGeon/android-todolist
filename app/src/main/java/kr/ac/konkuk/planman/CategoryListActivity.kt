@@ -25,7 +25,7 @@ class CategoryListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityCategoryListBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        supportActionBar?.hide()
+        supportActionBar?.title= "카테고리 관리"
 
         initAddBtn()
         initCategoryListData()
