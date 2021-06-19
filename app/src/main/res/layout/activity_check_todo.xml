@@ -27,6 +27,7 @@
 
 
             <TextView
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="25dp"
@@ -38,22 +39,26 @@
                 android:id="@+id/check_todo_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="test"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="10dp"
                 android:background="@drawable/check_category_box"
                 android:lines="5"
-                android:paddingHorizontal="10dp" />
+                android:padding="16dp" />
 
 
             <TextView
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="25dp"
                 android:text="참고자료"
                 android:textSize="25dp"
                 android:textStyle="bold" />
-
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="25dp"/>
             <include
                 android:id="@+id/checkWebAddress"
                 layout="@layout/check_todo_category"
@@ -94,12 +99,16 @@
             </RelativeLayout>
 
             <TextView
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="25dp"
                 android:text="알림"
                 android:textSize="25dp"
                 android:textStyle="bold" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="25dp"/>
 
             <include
                 android:id="@+id/checkDateTime"
