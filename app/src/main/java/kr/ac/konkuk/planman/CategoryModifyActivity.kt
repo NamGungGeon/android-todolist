@@ -9,6 +9,8 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.ListFragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,7 +39,7 @@ class CategoryModifyActivity : AppCompatActivity() {
         binding = ActivityCategoryModifyBinding.inflate(layoutInflater)
         setContentView(binding.root)
         getData = intent.getSerializableExtra("category") as CategoryData
-        supportActionBar?.title= getData.type
+        supportActionBar?.title= "카테고리 수정"
         getDataNotModified = CategoryData(getData.id, getData.type, getData.textSize, getData.textColor, getData.textStyle)
         initSpinner()
         initTitle()
@@ -45,17 +47,30 @@ class CategoryModifyActivity : AppCompatActivity() {
 
         binding!!.apply {
             deleteImg.setOnClickListener {
-                //DB delete category
-                if (listTodoFragment.isUsedCategoryData(getData)) {     //리스트 프래그먼트에서 해당 카테고리 내용 사용 중일 경우
-                    listTodoFragment.setDefaultCategoryType(getData)    //해당 데이터의 type = null 로 설정해 디폴트 타입으로 바꿔준다.
-                    db.deleteCategory(getData)
-                } else {
-                    db.deleteCategory(getData)
-                }
 
-                val intent = Intent()
-                setResult(Activity.RESULT_CANCELED, intent)
-                finish()
+
+                AlertDialog.Builder(this@CategoryModifyActivity)
+                    .setTitle("카테고리 삭제")
+                    .setMessage("${getData.type!!} 카테고리를 삭제합니다\n계속하시겠습니까?")
+                    .setPositiveButton("삭제") { dialog, i ->
+                        //DB delete category
+                        if (listTodoFragment.isUsedCategoryData(getData)) {     //리스트 프래그먼트에서 해당 카테고리 내용 사용 중일 경우
+                            listTodoFragment.setDefaultCategoryType(getData)    //해당 데이터의 type = null 로 설정해 디폴트 타입으로 바꿔준다.
+                            db.deleteCategory(getData)
+                        } else {
+                            db.deleteCategory(getData)
+                        }
+
+                        val intent = Intent()
+                        setResult(Activity.RESULT_CANCELED, intent)
+                        dialog.dismiss()
+                        Toast.makeText(applicationContext, "삭제 되었습니다", Toast.LENGTH_SHORT).show()
+                        finish()
+                    }
+                    .setNegativeButton("닫기") { dialog, i ->
+                        dialog.dismiss()
+                    }.create().show()
+                
             }
 
             categoryModifyTodoBtn.setOnClickListener {
