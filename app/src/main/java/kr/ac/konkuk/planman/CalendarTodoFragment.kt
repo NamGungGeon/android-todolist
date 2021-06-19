@@ -171,13 +171,7 @@ class CalendarTodoFragment : Fragment() {
                                                     if (category != null) {
                                                         setBackgroundColor(
                                                             resources.getColor(
-                                                                when (category.textColor) {
-                                                                    "검정" -> R.color.black
-                                                                    "빨강" -> R.color.red_800
-                                                                    "노랑" -> R.color.list_yellow
-                                                                    "파랑" -> R.color.blue_800
-                                                                    else -> R.color.black
-                                                                },
+                                                                CategoryData.Color.useColor(category.textColor),
                                                                 null
                                                             )
                                                         )

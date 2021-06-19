@@ -1,6 +1,8 @@
 package kr.ac.konkuk.planman
 
 import android.content.ContentValues
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
 import java.io.Serializable
 import java.time.format.TextStyle
 
@@ -8,6 +10,25 @@ import java.time.format.TextStyle
 //textColor : 파랑, 노랑, 빨강, 검정
 //textStyle : 진하게, 보통, 이탤릭체
 class CategoryData : Serializable {
+    class Color{
+        companion object{
+            val black= R.color.black
+            val red= R.color.red_800
+            val yellow= R.color.list_yellow
+            val blue= R.color.blue_800
+
+            @ColorRes
+            fun useColor(colorString: String?): Int{
+                return when (colorString) {
+                    "검정" -> black
+                    "빨강" -> red
+                    "노랑" -> yellow
+                    "파랑" -> blue
+                    else -> black
+                }
+            }
+        }
+    }
     var id: Long = -1
     var type:String? = null
     var textSize:String? = null
