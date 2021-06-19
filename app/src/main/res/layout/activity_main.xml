@@ -30,76 +30,9 @@
                 app:popupTheme="@style/Theme.Planman.PopupOverlay" />
         </com.google.android.material.appbar.AppBarLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="8dp">
-
-            <LinearLayout
-                android:layout_gravity="right"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/listViewMode"
-                    style="@style/icon"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/ic_baseline_checklist_rtl_24"
-                    android:tint="@color/black" />
-
-                <ImageView
-                    android:id="@+id/calendarViewMode"
-                    style="@style/icon"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/ic_baseline_calendar_today_24"
-                    android:tint="@color/light_gray" />
-
-                <ImageView
-                    android:id="@+id/mapViewMode"
-                    style="@style/icon"
-                    android:src="@drawable/ic_baseline_map_24"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:tint="@color/light_gray" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:background="@drawable/textinputborder"
-                    android:layout_margin="8dp"
-                    android:padding="8dp"
-                    tools:visibility="visible"
-                    android:visibility="gone"
-                    android:id="@+id/searchTodoInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:hint="여기에 검색할 할 일을 입력하세요" />
-            </LinearLayout>
-
-            <TextView
-                android:visibility="gone"
-                android:id="@+id/categoryTitleText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:text="할 일이 0개 있습니다"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
 
         <RelativeLayout
+            android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -114,10 +47,79 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_margin="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
                 android:text="할 일 추가" />
 
         </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="8dp"
+            android:elevation="16dp"
+            android:background="@color/white">
+            <EditText
+                android:background="@drawable/textinputborder"
+                android:layout_margin="16dp"
+                android:padding="8dp"
+                tools:visibility="visible"
+                android:visibility="gone"
+                android:id="@+id/searchTodoInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:hint="여기에 검색할 할 일을 입력하세요" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_weight="1"
+                    android:scaleType="center"
+                    android:id="@+id/listViewMode"
+                    style="@style/icon"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_baseline_checklist_rtl_24"
+                    android:tint="@color/black" />
+
+                <ImageView
+                    android:layout_weight="1"
+                    android:scaleType="center"
+                    android:id="@+id/calendarViewMode"
+                    style="@style/icon"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_baseline_calendar_today_24"
+                    android:tint="@color/light_gray" />
+
+                <ImageView
+                    android:layout_weight="1"
+                    android:scaleType="center"
+                    android:id="@+id/mapViewMode"
+                    style="@style/icon"
+                    android:src="@drawable/ic_baseline_map_24"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:tint="@color/light_gray" />
+            </LinearLayout>
+
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/categoryTitleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="할 일이 0개 있습니다"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
     </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView
