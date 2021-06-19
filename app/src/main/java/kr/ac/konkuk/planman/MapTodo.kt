@@ -61,14 +61,16 @@ class MapTodo(val context: Context, val filterTodoViewModel: FilterTodoViewModel
                     val index = category.indexOfFirst {
                         it.type == d.type
                     }
-                    val color = category[index].textColor
                     var markerColor = BitmapDescriptorFactory.HUE_CYAN
-                    if (color == "파랑")
-                        markerColor = BitmapDescriptorFactory.HUE_BLUE
-                    else if (color == "노랑")
-                        markerColor = BitmapDescriptorFactory.HUE_YELLOW
-                    else if (color == "빨강")
-                        markerColor = BitmapDescriptorFactory.HUE_RED
+                    if(index!= -1){
+                        val color = category[index].textColor
+                        if (color == "파랑")
+                            markerColor = BitmapDescriptorFactory.HUE_BLUE
+                        else if (color == "노랑")
+                            markerColor = BitmapDescriptorFactory.HUE_YELLOW
+                        else if (color == "빨강")
+                            markerColor = BitmapDescriptorFactory.HUE_RED
+                    }
 
                     try {
                         option.position(LatLng(loc[0].toDouble(), loc[1].toDouble()))

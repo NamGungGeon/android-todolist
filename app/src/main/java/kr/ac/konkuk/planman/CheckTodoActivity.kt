@@ -3,6 +3,7 @@ package kr.ac.konkuk.planman
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
@@ -13,6 +14,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import kr.ac.konkuk.planman.databinding.ActivityCheckTodoBinding
+import java.lang.Exception
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -20,7 +22,7 @@ class CheckTodoActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityCheckTodoBinding
     lateinit var data: MyData2
-    lateinit var googleMap:GoogleMap
+    lateinit var googleMap: GoogleMap
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,8 +34,11 @@ class CheckTodoActivity : AppCompatActivity() {
         init()
     }
 
-    private fun initText(layout: kr.ac.konkuk.planman.databinding.CheckTodoCategoryBinding, string: String?) {
-        if(string != null)
+    private fun initText(
+        layout: kr.ac.konkuk.planman.databinding.CheckTodoCategoryBinding,
+        string: String?
+    ) {
+        if (string != null)
             layout.checkTodoCategoryContent.text = string
         else
             layout.checkTodoLayout.isVisible = false
@@ -42,7 +47,7 @@ class CheckTodoActivity : AppCompatActivity() {
     private fun init() {
         binding.title.text = data.title
         binding.checkTodoContent.text = data.title
-        supportActionBar?.title= data.title
+        supportActionBar?.title = data.title
 
         binding.checkWebAddress.checkTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_find_in_page_24)
         binding.checkWebAddress.checkTodoCategoryTitle.text = "웹사이트"
@@ -60,35 +65,47 @@ class CheckTodoActivity : AppCompatActivity() {
         if (data.attachment.location == "")
             binding.checkTodoMap.isVisible = false
         else {
-            if(data.attachment.location== null)
+            if (data.attachment.location == null)
                 return
-            
+
             val location = data.attachment.location!!.split(" ")
-            val latLng = LatLng(location[0].toDouble(), location[1].toDouble())
-            val mapFragment = supportFragmentManager.findFragmentById(R.id.map_frag2) as SupportMapFragment
-            mapFragment.getMapAsync {
-                googleMap = it
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11.0f))
-                googleMap.setMinZoomPreference(8.0f)
-                googleMap.setMaxZoomPreference(16.0f)
-                val option = MarkerOptions()
-                option.position(latLng)
-                val db = DB(this)
-                val category:ArrayList<CategoryData> = db.readCategory()
-                val index = category.indexOfFirst {
-                    it.type == data.type
-                }
-                val color = category[index].textColor
-                var markerColor = BitmapDescriptorFactory.HUE_CYAN
-                if (color == "파랑")
-                    markerColor = BitmapDescriptorFactory.HUE_BLUE
-                else if (color == "노랑")
-                    markerColor = BitmapDescriptorFactory.HUE_YELLOW
-                else if (color == "빨강")
-                    markerColor = BitmapDescriptorFactory.HUE_RED
-                option.icon(BitmapDescriptorFactory.defaultMarker(markerColor))
-                googleMap.addMarker(option)
+            var latLng: LatLng? = null
+            try {
+                latLng = LatLng(location[0].toDouble(), location[1].toDouble())
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
+            val mapFragment =
+                supportFragmentManager.findFragmentById(R.id.map_frag2) as SupportMapFragment
+            if (latLng == null)
+                mapFragment.requireView().visibility = View.GONE
+            else
+                mapFragment.getMapAsync {
+                    googleMap = it
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11.0f))
+                    googleMap.setMinZoomPreference(8.0f)
+                    googleMap.setMaxZoomPreference(16.0f)
+
+                    val option = MarkerOptions()
+                    option.position(latLng)
+                    val db = DB(this)
+                    val category: ArrayList<CategoryData> = db.readCategory()
+                    val index = category.indexOfFirst {
+                        it.type == data.type
+                    }
+                    var markerColor = BitmapDescriptorFactory.HUE_CYAN
+                    if(index!= -1){
+                        val color = category[index].textColor
+                        if (color == "파랑")
+                            markerColor = BitmapDescriptorFactory.HUE_BLUE
+                        else if (color == "노랑")
+                            markerColor = BitmapDescriptorFactory.HUE_YELLOW
+                        else if (color == "빨강")
+                            markerColor = BitmapDescriptorFactory.HUE_RED
+                    }
+                    option.icon(BitmapDescriptorFactory.defaultMarker(markerColor))
+                    googleMap.addMarker(option)
+                }
         }
 
         binding.checkDateTime.checkTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_edit_calendar_24)
@@ -116,7 +133,7 @@ class CheckTodoActivity : AppCompatActivity() {
             binding.checkRadius.checkTodoCategoryContent.text = data.notification.notifyRadius
 
         binding.editButton.setOnClickListener {
-            val intent= Intent(applicationContext, AddTodoActivity::class.java)
+            val intent = Intent(applicationContext, AddTodoActivity::class.java)
             intent.putExtra("data", data)
             startActivity(intent)
         }
