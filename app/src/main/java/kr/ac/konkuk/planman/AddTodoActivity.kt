@@ -92,7 +92,7 @@ class AddTodoActivity : AppCompatActivity() {
                     parent: AdapterView<*>?,
                     view: View?,
                     position: Int,
-                    id: Long
+                    id: Long,
                 ) {
                     if (position != 0)
                         selectedType = types[position]
@@ -111,6 +111,12 @@ class AddTodoActivity : AppCompatActivity() {
             if (index > 0) {
                 Toast.makeText(this, "${selectedType}에 새로운 할 일을 추가합니다", Toast.LENGTH_SHORT)
                     .show()
+                binding.typeSpinner.setSelection(index)
+            }
+        }
+        if (data.type != null) {
+            val index = types.indexOf(data.type)
+            if (index > 0) {
                 binding.typeSpinner.setSelection(index)
             }
         }
@@ -291,8 +297,10 @@ class AddTodoActivity : AppCompatActivity() {
             val db = DB(this)
             //remove old data
             if (data.id.toInt() == -1) {
+                Toast.makeText(this, "할일이 추가되었습니다", Toast.LENGTH_LONG).show()
                 db.insertMyData(data)
             } else {
+                Toast.makeText(this, "할일이 수정되었습니다", Toast.LENGTH_LONG).show()
                 db.updateMyData(data)
             }
 
@@ -310,7 +318,6 @@ class AddTodoActivity : AppCompatActivity() {
 
 
             finish()
-            Toast.makeText(this, "할일이 추가되었습니다", Toast.LENGTH_LONG).show()
         }
     }
 
