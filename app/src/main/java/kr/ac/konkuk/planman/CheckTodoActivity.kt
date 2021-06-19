@@ -41,7 +41,7 @@ class CheckTodoActivity : AppCompatActivity() {
 
     private fun initText(
         layout: kr.ac.konkuk.planman.databinding.CheckTodoCategoryBinding,
-        string: String?
+        string: String?,
     ) {
         if (string != null)
             layout.checkTodoCategoryContent.text = string
@@ -70,7 +70,7 @@ class CheckTodoActivity : AppCompatActivity() {
             }
         }
 
-        var webSite= data.attachment.webSite?: ""
+        var webSite = data.attachment.webSite ?: ""
         binding.checkWebAddress.checkTodoCategoryIcon.setImageResource(R.drawable.ic_baseline_find_in_page_24)
         binding.checkWebAddress.checkTodoCategoryTitle.text = "웹사이트"
         if (webSite == "")
@@ -99,7 +99,7 @@ class CheckTodoActivity : AppCompatActivity() {
         }
 
         binding.checkPhoneNumber.checkTodoCategoryTitle.text = "전화번호"
-        val phoneNumber= data.attachment.phoneNumber?:""
+        val phoneNumber = data.attachment.phoneNumber ?: ""
         if (phoneNumber == "")
             binding.checkPhoneNumber.checkTodoLayout.visibility = View.GONE
         else {
@@ -222,10 +222,9 @@ class CheckTodoActivity : AppCompatActivity() {
     }
 
     private fun updateActionBarColorWithType() {
-        if (data.type != null)
-            supportActionBar?.setBackgroundDrawable(
-                ColorDrawable(useCategoryColor())
-            )
+        supportActionBar?.setBackgroundDrawable(
+            ColorDrawable(useCategoryColor())
+        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
