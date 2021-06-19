@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var drawerToggle: ActionBarDrawerToggle
     private val filterTodoViewModel: FilterTodoViewModel by viewModels()
 
+    private lateinit var maptodo: MapTodo
 
     override fun onCreate(savedInstanceState: Bundle?) {
 //        val db = DB(this)
@@ -52,9 +53,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initUI() {
+        maptodo= MapTodo(this)
+
         todoListVisualizers.add(ListTodoFragment())
         todoListVisualizers.add(CalendarTodoFragment())
-        todoListVisualizers.add(MapTodo(this).mapFragment)
+        todoListVisualizers.add(maptodo.mapFragment)
 
         binding.apply {
             todoListPager.adapter = object : FragmentStateAdapter(this@MainActivity) {
@@ -240,6 +243,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+
+        maptodo.init()
 
 //        initCategories(arrayListOf("업무", "구매", "약속"))
         initCategories(
