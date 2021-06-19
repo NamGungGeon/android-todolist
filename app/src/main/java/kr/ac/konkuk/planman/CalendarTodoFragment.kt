@@ -7,18 +7,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.fragment.app.activityViewModels
 import com.kizitonwose.calendarview.model.CalendarDay
 import com.kizitonwose.calendarview.model.CalendarMonth
 import com.kizitonwose.calendarview.model.DayOwner
 import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.MonthHeaderFooterBinder
 import com.kizitonwose.calendarview.ui.ViewContainer
+import com.kizitonwose.calendarview.utils.Size
 import kr.ac.konkuk.planman.databinding.CalendarDayLayoutBinding
 import kr.ac.konkuk.planman.databinding.CalendarHeaderLayoutBinding
 import kr.ac.konkuk.planman.databinding.FragmentCalendarTodoBinding
@@ -37,12 +35,13 @@ class CalendarTodoFragment : Fragment() {
 
 
     val daysOfWeek = daysOfWeekFromLocale()
-    val MAX_COUNT_TODO_PER_DAY = 2
+    val MAX_COUNT_TODO_PER_DAY = 3
 
     lateinit var todoList: ArrayList<MyData2>
     private var currentCalendarLocalDate: LocalDate = LocalDate.now()
     private var categoryList: ArrayList<CategoryData> = ArrayList()
     private var selectedLocalDate: LocalDate? = null
+    private val selectedCategoryViewModel: SelectedCategoryViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,8 +56,19 @@ class CalendarTodoFragment : Fragment() {
 
         binding = FragmentCalendarTodoBinding.bind(view)
 
-        todoList = DB(requireContext()).readMyData()
+        init()
+        selectedCategoryViewModel.selectedCategory.observe(viewLifecycleOwner) {
+            init()
+        }
+    }
+
+    private fun init() {
         categoryList = DB(requireContext()).readCategory()
+
+        val selectedCategory = selectedCategoryViewModel.selectedCategory
+        todoList = ArrayList(DB(requireContext()).readMyData().filter { todo ->
+            if (selectedCategory.value != null) todo.type != null && todo.type!! == selectedCategory.value else true
+        }.toList())
         initCalendar()
     }
 
@@ -91,7 +101,7 @@ class CalendarTodoFragment : Fragment() {
                                 )
                                     .toUpperCase(Locale.ENGLISH)
                                 tv.setTextColorRes(R.color.black)
-                                tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+                                tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10f)
                             }
                         month.yearMonth
                     }
@@ -120,13 +130,9 @@ class CalendarTodoFragment : Fragment() {
     }
 
     private fun initCalendar() {
-        binding.exFiveRv.apply {
-            layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
-            addItemDecoration(DividerItemDecoration(requireContext(), RecyclerView.VERTICAL))
-        }
-
         binding.apply {
             //calendar body
+            calendarView.daySize = Size(Integer.MIN_VALUE, 220)
             calendarView.dayBinder = object : DayBinder<DayViewContainer> {
                 // Called only when a new container is needed.
                 override fun create(view: View) = DayViewContainer(view)
@@ -147,8 +153,8 @@ class CalendarTodoFragment : Fragment() {
                             val dayTodoList = getDayTodoList(day.date)
 
                             val onDaySelected = fun() {
-                                if(selectedLocalDate == day.date){
-                                    selectedLocalDate= null
+                                if (selectedLocalDate == day.date) {
+                                    selectedLocalDate = null
                                     showTodoAsList(dayTodoList, day.date, true)
                                     calendarView.notifyCalendarChanged()
                                     return
@@ -164,7 +170,7 @@ class CalendarTodoFragment : Fragment() {
                                         dayTodoItems.append(todo.title!!, onDaySelected) { holder ->
                                             holder.labelView.apply {
                                                 setLines(1)
-                                                textSize = 6f
+                                                textSize = 10f
                                                 setTextColor(resources.getColor(R.color.white))
                                                 (this.layoutParams as LinearLayout.LayoutParams).setMargins(
                                                     0,
@@ -177,8 +183,7 @@ class CalendarTodoFragment : Fragment() {
                                                     if (category != null) {
                                                         setBackgroundColor(
                                                             resources.getColor(
-                                                                CategoryData.Color.useColor(category.textColor),
-                                                                null
+                                                                CategoryData.Color.useColor(category.textColor)
                                                             )
                                                         )
                                                     } else {
@@ -196,7 +201,7 @@ class CalendarTodoFragment : Fragment() {
                                             onDaySelected
                                         ) { holder ->
                                             holder.labelView.apply {
-                                                textSize = 8f
+                                                textSize = 10f
                                                 textAlignment = TextView.TEXT_ALIGNMENT_TEXT_END
                                                 (layoutParams as LinearLayout.LayoutParams).setMargins(
                                                     0,
@@ -288,7 +293,8 @@ class CalendarTodoFragment : Fragment() {
             if (!allAboutMonth) {
                 binding.selectedDayText.text =
                     "${date.year}년 ${date.monthValue}월 ${date.dayOfMonth}일의 할 일"
-                binding.calendarLayoutScrollView.fullScroll(View.FOCUS_DOWN)
+                if (todoList.isNotEmpty())
+                    binding.calendarLayoutScrollView.fullScroll(View.FOCUS_DOWN)
             } else {
                 binding.selectedDayText.text =
                     "${date.year}년 ${date.monthValue}월의 할 일"
@@ -301,9 +307,7 @@ class CalendarTodoFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        todoList = DB(requireContext()).readMyData()
-        initCalendar()
-        binding.calendarLayoutScrollView.fullScroll(View.FOCUS_UP)
+        init()
     }
 }
 

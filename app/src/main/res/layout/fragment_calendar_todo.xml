@@ -51,14 +51,11 @@
                 android:overScrollMode="never"
                 android:id="@+id/calendarView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                app:cv_hasBoundaries="false"
                 app:cv_monthHeaderResource="@layout/calendar_header_layout"
                 app:cv_dayViewResource="@layout/calendar_day_layout" />
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/exFiveRv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false" />
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="32dp"/>

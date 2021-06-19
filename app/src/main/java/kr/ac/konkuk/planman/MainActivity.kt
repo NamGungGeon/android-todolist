@@ -2,12 +2,12 @@ package kr.ac.konkuk.planman
 
 import android.content.Intent
 import android.content.res.Configuration
-import android.graphics.ColorFilter
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     val todoListVisualizers: ArrayList<Fragment> = ArrayList()
     lateinit var drawerToggle: ActionBarDrawerToggle
+    private val selectedCategoryViewModel: SelectedCategoryViewModel by viewModels()
 
     //use viewModel holding selectedCategory
     var selectedCategory: String? = null
@@ -100,15 +101,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun propagateUpdateCategory(selectedCategory: String) {
         //propagate to all fragments in viewPager
-        this.selectedCategory = selectedCategory
+        var value: String? = selectedCategory
         if (selectedCategory == "전체") {
-            this.selectedCategory = null
+            value = null
             supportActionBar?.title = "전체 할 일"
             Toast.makeText(this, "전체 할 일을 표시합니다", Toast.LENGTH_SHORT).show()
         } else {
             supportActionBar?.title = selectedCategory
             Toast.makeText(this, "${selectedCategory} 카테고리의 할 일을 표시합니다", Toast.LENGTH_SHORT).show()
         }
+        selectedCategoryViewModel.setSelectedCategory(value)
     }
 
     private fun initActionBar() {
