@@ -151,7 +151,7 @@ class CheckTodoActivity : AppCompatActivity() {
         binding.editButton.setOnClickListener {
             val intent = Intent(applicationContext, AddTodoActivity::class.java)
             intent.putExtra("data", data)
-            startActivity(intent)
+            startActivityForResult(intent, 1)
         }
         binding.removeButton.setOnClickListener{
             AlertDialog.Builder(this@CheckTodoActivity)
@@ -166,6 +166,14 @@ class CheckTodoActivity : AppCompatActivity() {
                 .setNegativeButton("닫기") { dialog, i ->
                     dialog.dismiss()
                 }.create().show()
+        }
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        val updatedData= DB(this).readMyData(this.data.id.toInt())
+        if(updatedData!= null){
+            this.data= updatedData
+            init()
         }
     }
 }
