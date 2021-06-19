@@ -93,6 +93,7 @@ class ListTodoFragment : Fragment() {
 
     fun setCustomData(data: ArrayList<MyData2>) {
         this.data = data
+        binding!!.listTitleText.visibility= View.GONE
         initRecyclerView()
     }
 
