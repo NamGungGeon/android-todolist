@@ -1,12 +1,12 @@
 package kr.ac.konkuk.planman
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -15,7 +15,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import kr.ac.konkuk.planman.databinding.ActivityCheckTodoBinding
-import java.lang.Exception
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -54,8 +53,24 @@ class CheckTodoActivity : AppCompatActivity() {
         binding.checkWebAddress.checkTodoCategoryTitle.text = "웹사이트"
         if (data.attachment.webSite == "")
             binding.checkWebAddress.checkTodoLayout.isVisible = false
-        else
+        else{
             binding.checkWebAddress.checkTodoCategoryContent.text = data.attachment.webSite
+            binding.checkWebAddress.checkTodoCategoryContent.setOnClickListener {
+                var url= data.attachment.webSite
+                if(url == null)
+                    return@setOnClickListener
+                try{
+                    if(!url.contains("http")){
+                        url= "http://${url}"
+                    }
+                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    startActivity(browserIntent)
+                }catch (e: Exception){
+                    e.printStackTrace()
+                    Toast.makeText(applicationContext, "올바른 인터넷 주소가 아닙니다\n${url}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
 
         binding.checkPhoneNumber.checkTodoCategoryTitle.text = "전화번호"
         if (data.attachment.phoneNumber == "")
