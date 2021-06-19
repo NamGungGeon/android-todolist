@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -136,6 +137,20 @@ class CheckTodoActivity : AppCompatActivity() {
             val intent = Intent(applicationContext, AddTodoActivity::class.java)
             intent.putExtra("data", data)
             startActivity(intent)
+        }
+        binding.removeButton.setOnClickListener{
+            AlertDialog.Builder(this@CheckTodoActivity)
+                .setTitle("할 일 삭제")
+                .setMessage("이 할 일을 삭제합니다\n계속하시겠습니까?")
+                .setPositiveButton("삭제") { dialog, i ->
+                    DB(applicationContext).deleteMyData(data)
+                    dialog.dismiss()
+                    finish()
+                    Toast.makeText(applicationContext, "삭제 되었습니다", Toast.LENGTH_SHORT).show()
+                }
+                .setNegativeButton("닫기") { dialog, i ->
+                    dialog.dismiss()
+                }.create().show()
         }
     }
 }
