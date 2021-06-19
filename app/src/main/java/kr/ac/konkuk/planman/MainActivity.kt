@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 //        val db = DB(this)
 //        db.resetDB()
-//
+////
 //        val db2 = DB(this)
 //        db2.insertCategory(CategoryData("업무", "보통", "파랑", "보통"))
 //        db2.insertCategory(CategoryData("구매", "보통", "노랑", "보통"))
