@@ -2,6 +2,7 @@ package kr.ac.konkuk.planman
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
@@ -9,6 +10,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.annotation.ColorInt
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -35,6 +37,7 @@ class AddTodoActivity : AppCompatActivity() {
 
     lateinit var timeNotificationManager: TimeAlarmManager
     private var selectedType: String? = null
+    private lateinit var categories: ArrayList<CategoryData>
 
     private lateinit var db: DB
 
@@ -45,11 +48,12 @@ class AddTodoActivity : AppCompatActivity() {
         setContentView(binding.root)
         supportActionBar?.title = "할 일 추가"
 
+        db = DB(this)
+        categories = ArrayList(db.readCategory())
+        updateActionBarColorWithType()
 
         selectedType = intent.getStringExtra("type")
-
         data = intent.getSerializableExtra("data") as MyData2
-        db = DB(this)
         init()
         if (data.id.toInt() != -1)
             initData()
@@ -74,7 +78,7 @@ class AddTodoActivity : AppCompatActivity() {
             binding.submitButton.setText("할 일 수정")
         }
 
-        val types = ArrayList(db.readCategory().map {
+        val types = ArrayList(categories.map {
             it.type
         }.toList())
         types.add(0, "카테고리 없음")
@@ -94,6 +98,8 @@ class AddTodoActivity : AppCompatActivity() {
                         selectedType = types[position]
                     else
                         selectedType = null
+
+                    updateActionBarColorWithType()
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -313,5 +319,23 @@ class AddTodoActivity : AppCompatActivity() {
         binding.editTextTodo.setText(data.content)
         binding.editTextTextWebAddress.setText(data.attachment.webSite)
         binding.editTextPhoneNumber.setText(data.attachment.phoneNumber)
+    }
+
+
+    @ColorInt
+    private fun useCategoryColor(): Int {
+        return resources.getColor(
+            CategoryData.Color.useColor(
+                categories.find {
+                    it.type == selectedType
+                }?.textColor
+            )
+        )
+    }
+
+    private fun updateActionBarColorWithType() {
+        supportActionBar?.setBackgroundDrawable(
+            ColorDrawable(useCategoryColor())
+        )
     }
 }
