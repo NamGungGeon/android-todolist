@@ -2,11 +2,14 @@ package kr.ac.konkuk.planman
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kr.ac.konkuk.planman.databinding.FragmentListTodoBinding
@@ -21,6 +24,7 @@ class ListTodoFragment : Fragment() {
     var binding: FragmentListTodoBinding? = null
     lateinit var adapter : ListAdapter
 
+    private val filterTodoViewModel: FilterTodoViewModel by activityViewModels()
     val db = activity?.applicationContext?.let { DB(it) }
 
     override fun onCreateView(
@@ -35,6 +39,34 @@ class ListTodoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        filterTodoViewModel.selectedCategory.observe(viewLifecycleOwner) {
+            init()
+        }
+        filterTodoViewModel.searchKeyword.observe(viewLifecycleOwner) {
+            init()
+        }
+    }
+
+    fun init() {
+        Thread{
+            categoryDataList = DB(requireContext()).readCategory()
+
+            val selectedCategory = filterTodoViewModel.selectedCategory.value
+            val searchKeyword = filterTodoViewModel.searchKeyword.value
+            data = ArrayList(DB(requireContext()).readMyData().filter { todo ->
+                if (searchKeyword?.isNotEmpty() == true)
+                    (todo.title != null && todo.title!!.contains(searchKeyword.toString()))
+                            || (todo.content != null && todo.content!!.contains(searchKeyword.toString()))
+                else
+                    if (selectedCategory != null)
+                        todo.type != null && todo.type!! == selectedCategory
+                    else true
+            }.toList())
+            activity?.runOnUiThread{
+                initRecyclerView()
+                initTitleText()
+            }
+        }.start()
     }
 
     override fun onResume() {
@@ -42,6 +74,18 @@ class ListTodoFragment : Fragment() {
 
         initData()
         initRecyclerView()
+        initTitleText()
+    }
+
+    fun initTitleText() {
+        var dataList: ArrayList<MyData2> = ArrayList()
+        dataList = ArrayList(DB(requireContext()).readMyData())
+
+        if (dataList == null) {
+            binding!!.listTitleText.text = "할 일이 0개 있습니다"
+        } else {
+            binding!!.listTitleText.text = "할 일이 ${dataList?.size}개 있습니다"
+        }
     }
 
     private fun initData() {
