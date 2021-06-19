@@ -45,7 +45,7 @@ class AddTodoActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
-        selectedType = intent.getStringExtra("category")
+        selectedType = intent.getStringExtra("type")
 
         data = intent.getSerializableExtra("data") as MyData2
         db= DB(this)
@@ -91,14 +91,14 @@ class AddTodoActivity : AppCompatActivity() {
                     }
 
                     override fun onNothingSelected(parent: AdapterView<*>?) {
-//                    TODO("Not yet implemented")
                     }
                 }
             if (selectedType != null) {
                 //find
                 val index = types.indexOf(selectedType)
                 if (index != -1) {
-                    binding.typeSpinner.setSelection(0)
+                    Toast.makeText(this, "${selectedType}에 새로운 할 일을 추가합니다", Toast.LENGTH_SHORT).show()
+                    binding.typeSpinner.setSelection(index)
                 }
             }
         }
