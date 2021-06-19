@@ -64,7 +64,7 @@ class ListTodoFragment : Fragment() {
             }.toList())
             activity?.runOnUiThread{
                 initRecyclerView()
-                initTitleText()
+                initTitleText(data.size)
             }
         }.start()
     }
@@ -74,18 +74,11 @@ class ListTodoFragment : Fragment() {
 
         initData()
         initRecyclerView()
-        initTitleText()
+        initTitleText(data.size)
     }
 
-    fun initTitleText() {
-        var dataList: ArrayList<MyData2> = ArrayList()
-        dataList = ArrayList(DB(requireContext()).readMyData())
-
-        if (dataList == null) {
-            binding!!.listTitleText.text = "할 일이 0개 있습니다"
-        } else {
-            binding!!.listTitleText.text = "할 일이 ${dataList?.size}개 있습니다"
-        }
+    fun initTitleText(length: Int) {
+        binding!!.listTitleText.text = "할 일이 ${length}개 있습니다"
     }
 
     private fun initData() {
