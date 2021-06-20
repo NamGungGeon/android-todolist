@@ -26,7 +26,6 @@ class SettingActivity : AppCompatActivity() {
             val intent = Intent(this, CategoryListActivity::class.java)
             startActivity(intent)
         }))
-        menuList.add(SimpleListRecyclerViewAdapter.SimpleListItem("알림 설정"))
         menuList.add(SimpleListRecyclerViewAdapter.SimpleListItem("초기화", {
             AlertDialog.Builder(this@SettingActivity)
                 .setTitle("초기화")
