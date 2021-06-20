@@ -10,12 +10,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import kotlin.random.Random
 
-class NotificationManager {
+class PlanmanNotificationManager {
     companion object {
-        private var inst: NotificationManager? = null
-        fun getInstance(): NotificationManager {
+        private var inst: PlanmanNotificationManager? = null
+        fun getInstance(): PlanmanNotificationManager {
             if (inst == null)
-                inst = NotificationManager()
+                inst = PlanmanNotificationManager()
             return inst!!
         }
     }
@@ -39,7 +39,7 @@ class NotificationManager {
             .setAutoCancel(true)
 
         val intent = Intent(context, CheckTodoActivity::class.java)
-//        intent.putExtra("data", todo)
+        intent.putExtra("data", todo)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
 
         val pIntent = PendingIntent.getActivity(

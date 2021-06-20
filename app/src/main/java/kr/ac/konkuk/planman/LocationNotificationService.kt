@@ -65,7 +65,7 @@ class LocationNotificationService : Service() {
 
                         if (notificationTargetList.isNotEmpty()) {
                             notificationTargetList.map { todo ->
-                                NotificationManager.getInstance()
+                                PlanmanNotificationManager.getInstance()
                                     .sendNotification(this@LocationNotificationService, todo)
                             }
                         }
