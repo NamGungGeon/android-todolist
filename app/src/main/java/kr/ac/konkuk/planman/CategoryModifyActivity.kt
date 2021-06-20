@@ -28,6 +28,7 @@ class CategoryModifyActivity : AppCompatActivity() {
     var inputTextStyle : String? = null
 
     var data : ArrayList<CategoryData> = ArrayList()
+    private lateinit var originCategoryType:String
     val db = DB(this)
     var listTodoFragment = ListTodoFragment()
 
@@ -39,6 +40,7 @@ class CategoryModifyActivity : AppCompatActivity() {
         binding = ActivityCategoryModifyBinding.inflate(layoutInflater)
         setContentView(binding.root)
         getData = intent.getSerializableExtra("category") as CategoryData
+        originCategoryType= getData.type!!
         supportActionBar?.title= "카테고리 수정"
         getDataNotModified = CategoryData(getData.id, getData.type, getData.textSize, getData.textColor, getData.textStyle)
         initSpinner()
@@ -74,12 +76,7 @@ class CategoryModifyActivity : AppCompatActivity() {
             }
 
             categoryModifyTodoBtn.setOnClickListener {
-                if (listTodoFragment.isUsedCategoryData(getDataNotModified)) { //리스트 프래그먼트에서 해당 카테고리 내용 사용 중일 경우
-                    listTodoFragment.updateExistingCategoryData(getData, getDataNotModified)
-                    db.updateCategory(getData)
-                } else {
-                    db.updateCategory(getData)
-                }
+                db.updateCategory(getData, originCategoryType)
 
                 val intent = Intent()
                 intent.putExtra("modifyTodo", CategoryData(categoryName, inputTextSize, inputTextColor, inputTextStyle))

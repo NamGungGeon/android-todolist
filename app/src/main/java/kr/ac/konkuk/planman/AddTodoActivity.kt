@@ -204,6 +204,7 @@ class AddTodoActivity : AppCompatActivity() {
                         googleMap.addMarker(option)
                     } catch (e: Exception) {
                         e.printStackTrace()
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(seoul, 11.0f))
                     }
                 }
             } else

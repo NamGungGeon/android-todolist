@@ -98,14 +98,31 @@ class DB(val context: Context) {
         db.close()
     }
 
-    fun updateCategory(category: CategoryData) {
+    fun updateCategory(category: CategoryData, originCategoryType: String?= null) {
+        if (originCategoryType != null)
+            readMyData().map {
+                if (it.type == originCategoryType) {
+                    it.type = category.type
+                    updateMyData(it)
+                }
+            }
+
         val db = dbHelper.writableDatabase
         val cv: ContentValues = category.getContentValues()
         db.update("category", cv, "id=?", arrayOf(category.id.toString()))
         db.close()
+
     }
 
     fun deleteCategory(category: CategoryData) {
+
+        readMyData().map {
+            if (it.type == category.type) {
+                it.type = null
+                updateMyData(it)
+            }
+        }
+
         val db = dbHelper.writableDatabase
         db.delete("category", "id=?", arrayOf(category.id.toString()))
         db.close()

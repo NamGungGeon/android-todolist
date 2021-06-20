@@ -49,6 +49,7 @@ class ListTodoFragment : Fragment() {
         }
     }
 
+
     fun init() {
         Thread {
             categoryDataList = DB(requireContext()).readCategory()
@@ -77,6 +78,8 @@ class ListTodoFragment : Fragment() {
         initData()
         initRecyclerView()
         initTitleText(data.size)
+
+        init()
     }
 
     fun initTitleText(length: Int) {
