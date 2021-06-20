@@ -249,7 +249,7 @@ class AddTodoActivity : AppCompatActivity() {
                         "-${dlgBinding.timePicker.hour}-${dlgBinding.timePicker.minute}"
                 Log.i("dateTimeFormat", data.notification.notifyDateTime!!)
 
-                var dateTime = LocalDateTime.of(
+                dateTime = LocalDateTime.of(
                     year,
                     month + 1,
                     dayOfMonth,
@@ -307,13 +307,7 @@ class AddTodoActivity : AppCompatActivity() {
             //시간 예약
             timeNotificationManager = TimeAlarmManager()
             if (data.notification.notifyDateTime != null) {
-                //sendBroadcast(Intent("alarm.test"))
-//                timeNotificationManager.reservationTimeAlarm(data, this)
-
-
-//                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis
-//                    , AlarmManager.INTERVAL_FIFTEEN_MINUTES
-//                    , pendingIntent)
+                timeNotificationManager.reservationTimeAlarm(data, dateTime, this)
             }
 
 
