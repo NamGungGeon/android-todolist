@@ -7,6 +7,7 @@ import android.os.Binder
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.util.Log
 import kotlin.math.acos
 import kotlin.math.cos
 import kotlin.math.sin
@@ -41,18 +42,24 @@ class LocationNotificationService : Service() {
                             return@useLastLocation
 
                         //location is available
-                        val todoList = ArrayList<MyData2>()
+                        val todoList = DB(this).readMyData()
                         val notificationTargetList = ArrayList<MyData2>()
                         todoList.map { todo ->
                             //calc distance between current location and todolist location
-                            val lat = todo.attachment!!.locationLat
-                            val lng = todo.attachment!!.locationLng
-                            if (lat != 0.0 && lng != 0.0) {
-                                val distanceFromHere =
-                                    distance(lat, lng, location.latitude, location.longitude)
-                                if (distanceFromHere <= 0.3) {
-                                    notificationTargetList.add(todo)
+                            try{
+                                val latlng= todo.attachment.location!!.split(" ")
+                                Log.i("locaiton check", "${todo.title}: ${todo.attachment.location!!}")
+                                val lat = latlng[0].toDouble()
+                                val lng = latlng[1].toDouble()
+                                if (lat != 0.0 && lng != 0.0) {
+                                    val distanceFromHere =
+                                        distance(lat, lng, location.latitude, location.longitude)
+                                    if (distanceFromHere <= 0.3) {
+                                        notificationTargetList.add(todo)
+                                    }
                                 }
+                            }catch (e: Exception){
+                                e.printStackTrace()
                             }
                         }
 
@@ -93,7 +100,7 @@ class LocationNotificationService : Service() {
         lon1: Double,
         lat2: Double,
         lon2: Double,
-        unit: Char = 'K'
+        unit: Char = 'K',
     ): Double {
         val theta = lon1 - lon2
         var dist =

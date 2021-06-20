@@ -211,7 +211,6 @@ class AddTodoActivity : AppCompatActivity() {
             googleMap.setMinZoomPreference(8.0f)
             googleMap.setMaxZoomPreference(16.0f)
             googleMap.setOnMapClickListener {
-                Toast.makeText(applicationContext, "touch", Toast.LENGTH_SHORT).show()
                 val option = MarkerOptions()
                 option.position(it)
                 val index = category.indexOfFirst {
