@@ -10,6 +10,11 @@ class SplashActivity : AppCompatActivity() {
         setContentView(R.layout.activity_splash)
         supportActionBar?.hide()
 
+        if (LocationManager.getInstance().requirePermission(this, 100)) {
+            LocationNotificationService.start(this)
+        }
+
+
         Thread{
             Thread.sleep(1500)
 
