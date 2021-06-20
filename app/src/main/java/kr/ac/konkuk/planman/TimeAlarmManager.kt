@@ -35,11 +35,13 @@ class TimeAlarmManager {
     fun reservationTimeAlarm(data : MyData2, dateTime : LocalDateTime?, context: Context) {
         timeData= data
 
-        calendar.set(Calendar.YEAR, dateTime!!.year)
-        calendar.set(Calendar.MONTH, dateTime!!.monthValue)
-        calendar.set(Calendar.DAY_OF_MONTH, dateTime!!.dayOfMonth)
-        calendar.set(Calendar.HOUR_OF_DAY, dateTime!!.hour)
-        calendar.set(Calendar.MINUTE, dateTime!!.minute)
+        if(dateTime== null)
+            return
+        calendar.set(Calendar.YEAR, dateTime.year)
+        calendar.set(Calendar.MONTH, dateTime.monthValue)
+        calendar.set(Calendar.DAY_OF_MONTH, dateTime.dayOfMonth)
+        calendar.set(Calendar.HOUR_OF_DAY, dateTime.hour)
+        calendar.set(Calendar.MINUTE, dateTime.minute)
         calendar.set(Calendar.SECOND, 0)
 
         //현재일보다 이전이면 등록 실패
